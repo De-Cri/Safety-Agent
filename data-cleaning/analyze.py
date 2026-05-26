@@ -129,7 +129,7 @@ def main():
 
     # Camera - Location analysis
     
-    # Creating a dictionary, the intent is being able to dict gives O(1) lookup by camera name later
+    # Creating a dictionary, the intent is that dict gives O(1) lookup by camera name later
     cam_counts = count_field(rows, lambda r: parse_name(r["Name"])[0])
     et_counts  = count_field(rows, lambda r: parse_name(r["Name"])[1])
     print(f"[Location / Camera Name] — {len(cam_counts)} camere distinte")
