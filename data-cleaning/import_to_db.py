@@ -26,7 +26,7 @@ from sqlalchemy import (
     Column, Integer, SmallInteger, Boolean, String,
     Numeric, DateTime, ForeignKey,
 )
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship, Session
 
 sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
 
@@ -101,6 +101,23 @@ def main():
     Base.metadata.create_all(engine)
     print("Tabelle create / verificate.")
 
+    with Session(engine) as session:
+        batch: list[SafetyEvent] = []
+        with open(CSV_PATH, encoding="utf-8-sig") as f:
+            reader = csv.DictReader(f, delimiter=DELIMITER)
+            for row in reader:
+                event, detections = parse_row(row)
+                event.detections = detections
+                batch.append(event)
+                if len(batch) >= BATCH_SIZE:
+                    session.add_all(batch)
+                    session.flush()
+                    batch = []
+        if batch:
+            session.add_all(batch)
+        session.commit()
+        print(f"Importazione completata.")
 
 if __name__ == "__main__":
     main()
+#FILTRARE LETTURA DB TRAMITE COLONNA O LIMITE DI ROWS , prima ID->Read, poi filtra colonna, poi limita rows.
