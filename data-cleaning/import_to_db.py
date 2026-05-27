@@ -16,20 +16,22 @@ import csv
 import os
 import re
 from datetime import datetime
+from dotenv import load_dotenv
 from analyze import parse_trigger, parse_name
+
+load_dotenv(".env.local")
 
 from sqlalchemy import (
     create_engine, text,
     Column, Integer, SmallInteger, Boolean, String,
     Numeric, DateTime, ForeignKey,
 )
-from sqlalchemy.orm import DeclarativeBase, Session, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship
 
 sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
 
-DATABASE_URL = os.environ.get(
-    "DATABASE_URL",
-    "postgresql+psycopg2://postgres:password@localhost:5432/safety_db",
+DATABASE_URL = os.environ.get("DATABASE_URL") or (
+    f"postgresql+psycopg2://postgres:{os.environ['PASSWORD_SAFETY_AGENT_DB']}@localhost:5432/safety_agent_db"
 )
 
 CSV_PATH = "data/Estrazione1.csv"
