@@ -10,7 +10,7 @@ from datetime import datetime
 CSV_PATH = "data/Estrazione1.csv"
 DELIMITER = ";"
 
-# the goal is to create a db structured to manage multiple detections per event that as well as splitting each sensitive information into a different column.
+# the goal is to create a db structured to manage multiple detections per event as well as splitting each sensitive information into a different column.
 
 # Triggers can have multiple detections, comma-separated, one per person/vehicle in the frame
 # Splits a trigger string into (violation_type, confidence) pairs, one per detection (detection>=1)
@@ -25,9 +25,9 @@ def parse_trigger(trigger_raw: str) -> list[tuple[str, float]]:
             results.append((part, None))
     return results
 
-# This function splits the camera_name from the event_name that are in the same "Name" column,
-# this is crucial because from the same camera_name we can have different events_name.
-# e.g. "Uscita Pedane Bottom Extended: [Operators without Hard Hat (0,7)];" and "Uscita Pedane Bottom Extended: [Operators without High Vis Vest];"
+# The dataset packed camera and event type into one "Name" column.
+# One camera fires many distinct event types, so we need them apart to group by either axis.
+# e.g. "Uscita Pedane Bottom Extended: [Operators without Hard Hat]" vs "Uscita Pedane Bottom Extended: [Operators without High Vis Vest]"
 
 def parse_name(name: str) -> tuple[str, str]:
     if ": " in name:
@@ -117,7 +117,7 @@ def main():
         print(f"  VALORI NON NUMERICI: {set(invalid_sev)}")
     print()
 
-    # REVIEWD ANALYSIS
+    # REVIEWED ANALYSIS
     reviewed_counts: dict[str, int] = {}
     for r in rows:
         v = r["Reviewed"]
@@ -143,7 +143,7 @@ def main():
     print()
 
 
-    #Trigger analysis
+    # Trigger analysis
     all_violations = []
     multi_detection_count = 0
     trigger_parse_errors = []
