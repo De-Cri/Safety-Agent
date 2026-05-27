@@ -6,68 +6,25 @@ Schema:
   event_detections  — one row per AI detection inside an event (can be multiple)
 
 Usage:
-  1. Set DATABASE_URL below (or export as environment variable)
-  2. pip install sqlalchemy psycopg2-binary
+  1. Fill .env.local with PASSWORD_SAFETY_AGENT_DB
+  2. pip install sqlalchemy psycopg2-binary python-dotenv
   3. python data-cleaning/import_to_db.py
 """
 
 import sys
 import csv
-import os
-import re
+from pathlib import Path
 from datetime import datetime
-from dotenv import load_dotenv
 from analyze import parse_trigger, parse_name
 
-load_dotenv(".env.local")
-
-from sqlalchemy import (
-    create_engine, text,
-    Column, Integer, SmallInteger, Boolean, String,
-    Numeric, DateTime, ForeignKey,
-)
-from sqlalchemy.orm import DeclarativeBase, relationship, Session
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from db.models import Base, SafetyEvent, EventDetection, engine, SessionLocal
 
 sys.stdout.reconfigure(encoding="utf-8")  # type: ignore[union-attr]
-
-DATABASE_URL = os.environ.get("DATABASE_URL") or (
-    f"postgresql+psycopg2://postgres:{os.environ['PASSWORD_SAFETY_AGENT_DB']}@localhost:5432/safety_agent_db"
-)
 
 CSV_PATH = "data/Estrazione1.csv"
 DELIMITER = ";"
 BATCH_SIZE = 500
-
-class Base(DeclarativeBase):
-    pass
-
-
-class SafetyEvent(Base):
-    __tablename__ = "safety_events"
-
-    event_id       = Column(Integer, primary_key=True, autoincrement=False)
-    event_datetime = Column(DateTime, nullable=False, index=True)
-    camera_name    = Column(String(100), nullable=False, index=True)
-    event_type     = Column(String(150), nullable=False)
-    severity       = Column(SmallInteger, nullable=False)
-    reviewed       = Column(Boolean, nullable=False, default=False)
-
-    detections = relationship(
-        "EventDetection",
-        back_populates="event",
-        cascade="all, delete-orphan",
-    )
-
-
-class EventDetection(Base):
-    __tablename__ = "event_detections"
-
-    id             = Column(Integer, primary_key=True, autoincrement=True)
-    event_id       = Column(Integer, ForeignKey("safety_events.event_id"), nullable=False, index=True)
-    violation_type = Column(String(60), nullable=False)
-    confidence     = Column(Numeric(5, 2), nullable=True)
-
-    event = relationship("SafetyEvent", back_populates="detections")
 
 
 def parse_row(row: dict) -> tuple[SafetyEvent, list[EventDetection]]:
@@ -95,13 +52,11 @@ def parse_row(row: dict) -> tuple[SafetyEvent, list[EventDetection]]:
 
 
 def main():
-    engine = create_engine(DATABASE_URL, echo=False)
-    print(f"Connessione a: {DATABASE_URL.split('@')[-1]}")
-
+    print(f"Connessione al DB...")
     Base.metadata.create_all(engine)
     print("Tabelle create / verificate.")
 
-    with Session(engine) as session:
+    with SessionLocal() as session:
         batch: list[SafetyEvent] = []
         with open(CSV_PATH, encoding="utf-8-sig") as f:
             reader = csv.DictReader(f, delimiter=DELIMITER)
@@ -116,8 +71,8 @@ def main():
         if batch:
             session.add_all(batch)
         session.commit()
-        print(f"Importazione completata.")
+        print("Importazione completata.")
+
 
 if __name__ == "__main__":
     main()
-#FILTRARE LETTURA DB TRAMITE COLONNA O LIMITE DI ROWS , prima ID->Read, poi filtra colonna, poi limita rows.
