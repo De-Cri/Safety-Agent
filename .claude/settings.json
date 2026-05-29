@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "safety-agent": {
+      "command": "python",
+      "args": ["mcp/server.py"],
+      "cwd": "c:\\Users\\ssamu\\OneDrive\\Desktop\\Safety-Agent"
+    }
+  }
+}

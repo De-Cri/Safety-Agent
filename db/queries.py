@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from db.models import SafetyEvent, EventDetection, SessionLocal
 
 
@@ -39,4 +41,18 @@ def get_events_filtered(column: str, value: str) -> list[dict]:
 def get_events_limited(limit: int) -> list[dict]:
     with SessionLocal() as session:
         events = session.query(SafetyEvent).order_by(SafetyEvent.event_datetime).limit(limit).all()
+        return [_event_to_dict(e) for e in events]
+
+def get_events_by_date(
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    limit: int = 100,
+) -> list[dict]:
+    with SessionLocal() as session:
+        q = session.query(SafetyEvent)
+        if date_start:
+            q = q.filter(SafetyEvent.event_datetime >= date_start)
+        if date_end:
+            q = q.filter(SafetyEvent.event_datetime <= date_end)
+        events = q.order_by(SafetyEvent.event_datetime).limit(limit).all()
         return [_event_to_dict(e) for e in events]
