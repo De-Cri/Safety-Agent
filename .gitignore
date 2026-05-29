@@ -1,4 +1,4 @@
 /data
 .venv
 .env.local
-/data-cleaning/__pycache__
+**/__pycache__
