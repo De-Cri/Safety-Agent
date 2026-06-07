@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<title>Benchmark Token Budget — Safety Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         font-size: 13px; background: #f5f6fa; color: #2d3436; }
+
+  h1 { padding: 24px 32px 8px; font-size: 20px; color: #2d3436; }
+  .subtitle { padding: 0 32px 20px; color: #636e72; font-size: 12px; }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead th {
+    background: #2d3436; color: #fff; padding: 12px 14px;
+    text-align: left; font-size: 12px; font-weight: 600; letter-spacing: .5px;
+    position: sticky; top: 0; z-index: 10;
+  }
+  tr:nth-child(even) td { background: #fafbfc; }
+  td { padding: 14px; vertical-align: top; border-bottom: 1px solid #dfe6e9; }
+
+  .col-query  { width: 14%; background: #fff !important; }
+  .col-full   { width: 26%; border-left: 3px solid #e17055; }
+  .col-lean   { width: 26%; border-left: 3px solid #00b894; }
+  .col-judge  { width: 34%; border-left: 3px solid #6c5ce7; background: #faf9ff !important; }
+
+  .query-id   { font-weight: 700; font-size: 18px; color: #6c5ce7; margin-bottom: 6px; }
+  .query-text { font-weight: 600; margin-bottom: 10px; line-height: 1.4; }
+
+  .resp-meta { background: #f5f6fa; border-radius: 6px; padding: 8px 10px;
+               margin-bottom: 10px; font-size: 11px; line-height: 1.8; }
+  .resp-text { line-height: 1.6; font-size: 12px; }
+
+  .badge { display: inline-block; border-radius: 4px; padding: 1px 6px;
+           font-size: 11px; font-weight: 600; }
+  .badge-in  { background: #dfe6e9; color: #2d3436; }
+  .badge-out { background: #d1ecf1; color: #0c5460; }
+  .badge-tot { background: #fff3cd; color: #856404; }
+
+  .savings-wrap { margin-top: 8px; }
+  .savings-bar  { height: 8px; background: #dfe6e9; border-radius: 4px; overflow: hidden; margin-bottom: 3px; }
+  .savings-bar div { height: 100%; border-radius: 4px; }
+  .savings-label { font-size: 11px; font-weight: 700; }
+
+  .judge-scores { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+  .judge-scores span { background: #f5f6fa; border-radius: 4px;
+                       padding: 3px 8px; font-size: 11px; font-weight: 600; }
+  .verdict { background: #6c5ce7 !important; color: #fff !important; }
+  .judge-note { line-height: 1.6; font-size: 12px; color: #2d3436; }
+
+  code { background: #f0f0f0; border-radius: 3px; padding: 1px 4px; font-size: 11px; }
+
+  .summary-bar {
+    display: flex; gap: 24px; padding: 16px 32px;
+    background: #2d3436; color: #fff; font-size: 12px; flex-wrap: wrap;
+  }
+  .summary-bar .item { display: flex; flex-direction: column; }
+  .summary-bar .val  { font-size: 22px; font-weight: 700; color: #00b894; }
+  .summary-bar .lbl  { color: #b2bec3; font-size: 11px; }
+</style>
+</head>
+<body>
+
+<h1>Benchmark Token Budget — Safety Agent MCP</h1>
+<p class="subtitle">
+  Gemini 2.5-Flash · GEMINI_API_KEY_FALLBACK · LLM-as-Judge: Claude Sonnet 4.6 (claude-sonnet-4-6)
+</p>
+
+<div class="summary-bar">
+  <div class="item"><span class="val">8</span><span class="lbl">Chiamate API totali</span></div>
+  <div class="item"><span class="val">9,946</span><span class="lbl">Input token SENZA filtro</span></div>
+  <div class="item"><span class="val">2,577</span><span class="lbl">Input token CON filtro</span></div>
+  <div class="item">
+    <span class="val">
+      74%
+    </span>
+    <span class="lbl">Risparmio medio input token</span>
+  </div>
+  <div class="item"><span class="val" style="color:#e17055">1/4</span><span class="lbl">Query dove FULL è migliore (Q2)</span></div>
+  <div class="item"><span class="val" style="color:#00b894">3/4</span><span class="lbl">Query dove LEAN è migliore o pari (dopo fix)</span></div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Query</th>
+      <th>🔴 SENZA filtro — payload completo (fields=*)</th>
+      <th>🟢 CON filtro — fields scelti dal LLM</th>
+      <th>⚖️ LLM as Judge · Claude Sonnet 4.6 (claude-sonnet-4-6)</th>
+    </tr>
+  </thead>
+  <tbody>
+    
+    <tr>
+        <td class="col-query">
+            <div class="query-id">Q1</div>
+            <div class="query-text">Elenca le ultime 10 violazioni con camera e severity</div>
+            <div class="savings-wrap">
+                <div class="savings-bar"><div style="width:62%;background:#2ecc71"></div></div><span class="savings-label">−62% input token</span>
+            </div>
+        </td>
+        <td class="col-full">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>* (tutti)</code><br>
+            <span class="badge badge-in">1,366 tok</span> input &nbsp;
+            <span class="badge badge-out">178 tok</span> output &nbsp;
+            <span class="badge badge-tot">2,384 tok</span> totali<br>
+            <small>Payload: 3,153 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco le ultime 10 violazioni registrate, ordinate dalla più recente alla meno recente:<br><br>*   **Camera:** Carico Calce, **Severity:** 8<br>*   **Camera:** Cancello JMS, **Severity:** 8<br>*   **Camera:** Uscita Pedane Bottom Extended, **Severity:** 6<br>*   **Camera:** Uscita Pedane Bottom Extended, **Severity:** 5<br>*   **Camera:** Griglia, **Severity:** 8<br>*   **Camera:** Griglia, **Severity:** 8<br>*   **Camera:** Gasolio CAT, **Severity:** 8<br>*   **Camera:** Gasolio CAT, **Severity:** 8<br>*   **Camera:** Carico Calce, **Severity:** 8<br>*   **Camera:** Carico Calce, **Severity:** 8</div>
+    
+        </td>
+        <td class="col-lean">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>event_id, event_datetime, camera_name, severity</code><br>
+            <span class="badge badge-in">523 tok</span> input &nbsp;
+            <span class="badge badge-out">189 tok</span> output &nbsp;
+            <span class="badge badge-tot">1,012 tok</span> totali<br>
+            <small>Payload: 1,013 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco le ultime 10 violazioni, con la telecamera e la gravità (severity):<br><br>1.  **Camera:** Carico Calce, **Severity:** 8<br>2.  **Camera:** Carico Calce, **Severity:** 8<br>3.  **Camera:** Gasolio CAT, **Severity:** 8<br>4.  **Camera:** Gasolio CAT, **Severity:** 8<br>5.  **Camera:** Griglia, **Severity:** 8<br>6.  **Camera:** Griglia, **Severity:** 8<br>7.  **Camera:** Uscita Pedane Bottom Extended, **Severity:** 5<br>8.  **Camera:** Uscita Pedane Bottom Extended, **Severity:** 6<br>9.  **Camera:** Cancello JMS, **Severity:** 8<br>10. **Camera:** Carico Calce, **Severity:** 8</div>
+    
+        </td>
+        <td class="col-judge">
+            <div class="judge-scores">
+                <span>FULL: ✅ Buona</span>
+                <span>LEAN: ✅ Migliore</span>
+                <span class="verdict">🟢 LEAN vince</span>
+            </div>
+            <div class="judge-note">Entrambe corrette sui dati richiesti (camera + severity). FULL dichiara erroneamente di ordinare 'dalla più recente' mentre i dati sono ascending — errore di interpretazione dell'ordinamento. LEAN usa numerazione esplicita ed è più precisa. Risparmio: -843 input tok (-62%) con qualità superiore.</div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="col-query">
+            <div class="query-id">Q2</div>
+            <div class="query-text">Fammi una panoramica delle ultime 20 violazioni</div>
+            <div class="savings-wrap">
+                <div class="savings-bar"><div style="width:56%;background:#f39c12"></div></div><span class="savings-label">−56% input token</span>
+            </div>
+        </td>
+        <td class="col-full">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>* (tutti)</code><br>
+            <span class="badge badge-in">2,654 tok</span> input &nbsp;
+            <span class="badge badge-out">343 tok</span> output &nbsp;
+            <span class="badge badge-tot">3,967 tok</span> totali<br>
+            <small>Payload: 6,309 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco una panoramica delle ultime 20 violazioni rilevate, basata sui dati forniti:<br><br>**Periodo di Rilevamento:**<br>Le violazioni sono state registrate tra il 7 aprile 2026 dalle 17:55:52 e il 7 aprile 2026 alle 21:38:13.<br><br>**Tipologie e Frequenza delle Violazioni:**<br>Le 20 violazioni si suddividono nelle seguenti tipologie:<br><br>*   **Mancato utilizzo del casco (No Hard Hat):** Sono state rilevate 14 violazioni.<br>*   **Mancato utilizzo del giubbotto ad alta visibilità (No High Vis vest):** Sono state rilevate 6 violazioni.<br><br>**Telecamere Coinvolte:**<br>Le violazioni sono state rilevate dalle seguenti telecamere:<br><br>*   Carico Calce<br>*   Gasolio CAT<br>*   Griglia<br>*   Uscita Pedane Bottom Extended<br>*   Cancello JMS<br><br>**Dettagli Aggiuntivi:**<br><br>*   **Gravità:** Le violazioni per il mancato utilizzo del casco hanno una gravità pari a 8, mentre quelle relative al giubbotto ad alta visibilità hanno una gravità di 5 o 6.<br>*   **Stato di Revisione:** Tutte le 20 violazioni rilevate risultano non ancora revisionate.<br>*   **Livello di Confidenza:** La confidenza nelle rilevazioni varia da un minimo del 70% a un massimo del 90%.</div>
+    
+        </td>
+        <td class="col-lean">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>event_id, event_datetime, camera_name, event_type, severity</code><br>
+            <span class="badge badge-in">1,179 tok</span> input &nbsp;
+            <span class="badge badge-out">1,610 tok</span> output &nbsp;
+            <span class="badge badge-tot">3,189 tok</span> totali<br>
+            <small>Payload: 2,793 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco una panoramica delle ultime 20 violazioni registrate:<br><br>1.  **ID Evento:** 2505<br>    *   **Data e Ora:** 2026-04-07 17:55:52<br>    *   **Telecamera:** Carico Calce<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>2.  **ID Evento:** 2506<br>    *   **Data e Ora:** 2026-04-07 17:55:52<br>    *   **Telecamera:** Carico Calce<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>3.  **ID Evento:** 2507<br>    *   **Data e Ora:** 2026-04-07 18:17:28<br>    *   **Telecamera:** Gasolio CAT<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>4.  **ID Evento:** 2508<br>    *   **Data e Ora:** 2026-04-07 18:37:18<br>    *   **Telecamera:** Gasolio CAT<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>5.  **ID Evento:** 2509<br>    *   **Data e Ora:** 2026-04-07 18:37:18<br>    *   **Telecamera:** Griglia<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>6.  **ID Evento:** 2510<br>    *   **Data e Ora:** 2026-04-07 18:50:06<br>    *   **Telecamera:** Griglia<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>7.  **ID Evento:** 2511<br>    *   **Data e Ora:** 2026-04-07 18:52:25<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators without High Vis Vest<br>    *   **Gravità:** 5<br>8.  **ID Evento:** 2512<br>    *   **Data e Ora:** 2026-04-07 18:52:25<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators Event-2<br>    *   **Gravità:** 6<br>9.  **ID Evento:** 2513<br>    *   **Data e Ora:** 2026-04-07 19:06:17<br>    *   **Telecamera:** Cancello JMS<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>10. **ID Evento:** 2514<br>    *   **Data e Ora:** 2026-04-07 20:04:39<br>    *   **Telecamera:** Carico Calce<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>11. **ID Evento:** 2515<br>    *   **Data e Ora:** 2026-04-07 20:05:15<br>    *   **Telecamera:** Carico Calce<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>12. **ID Evento:** 2516<br>    *   **Data e Ora:** 2026-04-07 21:14:14<br>    *   **Telecamera:** Griglia<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>13. **ID Evento:** 2517<br>    *   **Data e Ora:** 2026-04-07 21:28:16<br>    *   **Telecamera:** Griglia<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>14. **ID Evento:** 2518<br>    *   **Data e Ora:** 2026-04-07 21:28:17<br>    *   **Telecamera:** Gasolio CAT<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>15. **ID Evento:** 2519<br>    *   **Data e Ora:** 2026-04-07 21:36:55<br>    *   **Telecamera:** Gasolio CAT<br>    *   **Tipo di Violazione:** Event No Hard Hat<br>    *   **Gravità:** 8<br>16. **ID Evento:** 2520<br>    *   **Data e Ora:** 2026-04-07 21:38:11<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators without High Vis Vest<br>    *   **Gravità:** 5<br>17. **ID Evento:** 2521<br>    *   **Data e Ora:** 2026-04-07 21:38:11<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators Event-2<br>    *   **Gravità:** 6<br>18. **ID Evento:** 2522<br>    *   **Data e Ora:** 2026-04-07 21:38:12<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators Event-2<br>    *   **Gravità:** 6<br>19. **ID Evento:** 2523<br>    *   **Data e Ora:** 2026-04-07 21:38:12<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators without High Vis Vest<br>    *   **Gravità:** 5<br>20. **ID Evento:** 2525<br>    *   **Data e Ora:** 2026-04-07 21:38:13<br>    *   **Telecamera:** Uscita Pedane Bottom Extended<br>    *   **Tipo di Violazione:** Operators without Hard Hat (0,7)<br>    *   **Gravità:** 8</div>
+    
+        </td>
+        <td class="col-judge">
+            <div class="judge-scores">
+                <span>FULL: ✅ Ottima</span>
+                <span>LEAN: ⚠️ Verbosa (v2 fix parziale)</span>
+                <span class="verdict">🔴 FULL vince</span>
+            </div>
+            <div class="judge-note">FULL: sintesi eccellente in 343 output tok — periodo, tipologie con conteggi, telecamere, severity, stato revisione, range confidence. LEAN v1 (con reviewed): listing da 1790 tok. LEAN v2 (fix — senza reviewed): listing da 1610 tok. Il fix ha ridotto il verbosity ma non ha risolto il problema strutturale: la presenza di event_id per ogni riga spinge il modello in 'listing mode' indipendentemente dai campi inclusi. Conclusione: per query di panoramica servono tool di aggregazione (COUNT/GROUP BY), non raw event listing. Il filtro sui campi da solo non è sufficiente.</div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="col-query">
+            <div class="query-id">Q3</div>
+            <div class="query-text">Quali telecamere compaiono di più tra le ultime 30 violazioni?</div>
+            <div class="savings-wrap">
+                <div class="savings-bar"><div style="width:84%;background:#2ecc71"></div></div><span class="savings-label">−84% input token</span>
+            </div>
+        </td>
+        <td class="col-full">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>* (tutti)</code><br>
+            <span class="badge badge-in">3,930 tok</span> input &nbsp;
+            <span class="badge badge-out">89 tok</span> output &nbsp;
+            <span class="badge badge-tot">5,857 tok</span> totali<br>
+            <small>Payload: 9,344 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Basandosi esclusivamente sui dati forniti, le telecamere che compaiono più frequentemente tra le ultime 30 violazioni sono:<br><br>*   **Carico Calce**: 8 volte<br>*   **Uscita Pedane Bottom Extended**: 8 volte<br><br>Seguono:<br>*   Griglia: 7 volte<br>*   Gasolio CAT: 6 volte<br>*   Cancello JMS: 1 volta</div>
+    
+        </td>
+        <td class="col-lean">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>event_id, camera_name</code><br>
+            <span class="badge badge-in">614 tok</span> input &nbsp;
+            <span class="badge badge-out">55 tok</span> output &nbsp;
+            <span class="badge badge-tot">2,014 tok</span> totali<br>
+            <small>Payload: 1,506 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Basandosi esclusivamente sui dati forniti, le telecamere che compaiono più frequentemente tra le ultime 30 violazioni sono:<br><br>*   **Carico Calce**: 8 volte<br>*   **Uscita Pedane Bottom Extended**: 8 volte</div>
+    
+        </td>
+        <td class="col-judge">
+            <div class="judge-scores">
+                <span>FULL: ✅ Corretta</span>
+                <span>LEAN: ✅ Corretta (v2 fix ok)</span>
+                <span class="verdict">🟢 LEAN vince</span>
+            </div>
+            <div class="judge-note">FULL: Carico Calce 8, Uscita Pedane 8, Griglia 7, Gasolio CAT 6, Cancello JMS 1. LEAN v1 (solo camera_name, no event_id): riportava solo Carico Calce — pareggio mancato. LEAN v2 (fix — event_id + camera_name): identifica correttamente entrambi i vincitori a pari merito. Il fix ha funzionato perfettamente: event_id come anchor di conteggio è sufficiente. Risparmio: -3316 input tok (-84%) con qualità identica a FULL.</div>
+        </td>
+    </tr>
+    
+    <tr>
+        <td class="col-query">
+            <div class="query-id">Q4</div>
+            <div class="query-text">Riassumi gli ultimi 15 eventi di sicurezza per tipologia</div>
+            <div class="savings-wrap">
+                <div class="savings-bar"><div style="width:87%;background:#2ecc71"></div></div><span class="savings-label">−87% input token</span>
+            </div>
+        </td>
+        <td class="col-full">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>* (tutti)</code><br>
+            <span class="badge badge-in">1,996 tok</span> input &nbsp;
+            <span class="badge badge-out">53 tok</span> output &nbsp;
+            <span class="badge badge-tot">2,364 tok</span> totali<br>
+            <small>Payload: 4,651 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco un riepilogo degli ultimi 15 eventi di sicurezza per tipologia:<br><br>*   **Event No Hard Hat**: 13<br>*   **Operators without High Vis Vest**: 1<br>*   **Operators Event-2**: 1</div>
+    
+        </td>
+        <td class="col-lean">
+            
+        <div class="resp-meta">
+            <b>Fields:</b> <code>event_type, severity</code><br>
+            <span class="badge badge-in">261 tok</span> input &nbsp;
+            <span class="badge badge-out">55 tok</span> output &nbsp;
+            <span class="badge badge-tot">870 tok</span> totali<br>
+            <small>Payload: 735 bytes · Modello: gemini-2.5-flash</small>
+        </div>
+        <div class="resp-text">Ecco un riassunto degli ultimi 15 eventi di sicurezza per tipologia:<br><br>*   **Event No Hard Hat**: 13 eventi<br>*   **Operators without High Vis Vest**: 1 evento<br>*   **Operators Event-2**: 1 evento</div>
+    
+        </td>
+        <td class="col-judge">
+            <div class="judge-scores">
+                <span>FULL: ✅ Corretta</span>
+                <span>LEAN: ✅ Identica</span>
+                <span class="verdict">🟢 LEAN vince</span>
+            </div>
+            <div class="judge-note">Entrambe: Event No Hard Hat 13, Operators without High Vis Vest 1, Operators Event-2 1. Risparmio: -1735 input tok (-87%) con qualità identica. Caso ideale per il filtro: event_type + severity bastano per un riepilogo per tipologia.</div>
+        </td>
+    </tr>
+    
+  </tbody>
+</table>
+
+</body>
+</html>
