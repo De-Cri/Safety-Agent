@@ -2,7 +2,7 @@ import sys
 import asyncio
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "plot-creator"))
-from generate_histograms import render_chart
+from generate_histograms import render_chart, ChartData
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 from api.auth import require_api_key
@@ -48,7 +48,29 @@ async def reset_chat(req: Request):
     return {"ok": True}
 
 
-_CHARTABLE = {"events_per_day", "group_by_count"}
+_CHARTABLE = {"events_per_day", "group_by_count", "events_by_hour"}
+
+def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
+    if tool == "events_per_day":
+        return ChartData(
+            labels=[r["date"] for r in data],
+            values=[r["count"] for r in data],
+            title="Eventi per giorno",
+        )
+    if tool == "group_by_count":
+        return ChartData(
+            labels=[r["value"] for r in data],
+            values=[r["count"] for r in data],
+            title="Distribuzione eventi",
+        )
+    if tool == "events_by_hour":
+        return ChartData(
+            labels=[f"{r['hour']:02d}:00" for r in data],
+            values=[r["count"] for r in data],
+            title="Eventi per ora del giorno",
+        )
+    return None
+
 
 async def _to_chart(tool_results: list[dict]) -> str | None:
     hit = next((r for r in tool_results if r["tool"] in _CHARTABLE), None)
@@ -63,21 +85,11 @@ async def _to_chart(tool_results: list[dict]) -> str | None:
         if hasattr(data, "structuredContent"):
             data = data.structuredContent.get("result", data)
 
-        if tool == "events_per_day":
-            labels = [r["date"] for r in data]
-            values = [r["count"] for r in data]
-            title  = "Eventi per giorno"
-        elif tool == "group_by_count":
-            labels = [r["value"] for r in data]
-            values = [r["count"] for r in data]
-            title  = "Distribuzione eventi"
-        else:
-            return None
-
-        if not labels:
+        chart_data = _build_chart_data(tool, data)
+        if not chart_data or not chart_data.labels:
             return None
 
         loop = asyncio.get_event_loop()
-        return await loop.run_in_executor(None, render_chart, labels, values, title)
+        return await loop.run_in_executor(None, render_chart, chart_data)
     except Exception:
         return None

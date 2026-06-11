@@ -1,4 +1,5 @@
 /data
 .venv
 .env.local
+ui/config.js
 **/__pycache__

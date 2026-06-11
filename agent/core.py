@@ -62,7 +62,8 @@ class Agent:
         )
 
     async def send(self, chat_session, user_input: str) -> tuple[str, list[dict], dict]:
-        """Send a message to an existing chat session. History is preserved across calls."""
+        """Send a message to an existing chat session. Only the last 2 user turns are kept in context."""
+        _trim_history(chat_session, keep_turns=2)
         history_before = len(chat_session.get_history() or [])
         response = await chat_session.send_message(user_input)
 
@@ -99,6 +100,18 @@ def _extract_usage(response) -> dict:
         "total_tokens":    getattr(u, "total_token_count",       0) or 0,
         "thinking_tokens": getattr(u, "thoughts_token_count",    0) or 0,
     }
+
+
+def _trim_history(chat_session, keep_turns: int) -> None:
+    history = chat_session._curated_history
+    # Gemini marks tool responses as role="user" too — filter to only real text turns
+    real_user_indices = [
+        i for i, c in enumerate(history)
+        if getattr(c, "role", None) == "user"
+        and any(getattr(p, "text", None) for p in (c.parts or []))
+    ]
+    if len(real_user_indices) > keep_turns:
+        chat_session._curated_history = history[real_user_indices[-keep_turns]:]
 
 
 #Keeping the agent always updated on any schema drift, it has alywas the current state of the schema

@@ -201,6 +201,45 @@ def get_events_by_date(
     )
 
 
+def average_events_per_period(
+    period: str,
+    filters: EventFilters | None = None,
+) -> float:
+    allowed = {"day", "hour"}
+    if period not in allowed:
+        raise ValueError(f"period must be one of {allowed}")
+    with SessionLocal() as session:
+        period_expr = (
+            func.date(SafetyEvent.event_datetime)
+            if period == "day"
+            else func.extract("hour", SafetyEvent.event_datetime)
+        )
+        subq = (
+            _apply_event_filters(
+                session.query(func.count(SafetyEvent.event_id).label("cnt")),
+                filters,
+            )
+            .group_by(period_expr)
+            .subquery()
+        )
+        result = session.query(func.avg(subq.c.cnt)).scalar()
+        return round(float(result), 2) if result is not None else 0.0
+
+
+def events_by_hour(
+    filters: EventFilters | None = None,
+) -> list[dict]:
+    with SessionLocal() as session:
+        hour_expr = func.extract("hour", SafetyEvent.event_datetime)
+        q = session.query(
+            hour_expr.label("hour"),
+            func.count(SafetyEvent.event_id).label("count"),
+        )
+        q = _apply_event_filters(q, filters)
+        rows = q.group_by(hour_expr).order_by(hour_expr).all()
+        return [{"hour": int(r[0]), "count": r[1]} for r in rows]
+
+
 def events_per_day(
     filters: EventFilters | None = None,
 ) -> list[dict]:
@@ -210,3 +249,5 @@ def events_per_day(
         q = _apply_event_filters(q, filters)
         rows = q.group_by(date_col).order_by(date_col).all()
         return [{"date": str(r[0]), "count": r[1]} for r in rows]
+
+

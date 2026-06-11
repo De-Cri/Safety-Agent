@@ -4,7 +4,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from api.routes.chat import router as chat_router
 from agent.core import Agent
 
@@ -24,11 +24,8 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://127.0.0.1:5500"],
-    allow_methods=["POST", "GET"],
-    allow_headers=["Content-Type", "X-API-Key"],
-)
-
 app.include_router(chat_router)
+
+# Stessa origine per UI e API: niente CORS, niente Live Server.
+# Il mount va per ultimo, altrimenti ruba le route all'API.
+app.mount("/", StaticFiles(directory=Path(__file__).parent.parent / "ui", html=True), name="ui")

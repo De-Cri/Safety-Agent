@@ -1,5 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/chat";
-const API_KEY = "SAMdk7AqFmdsJRklcJHJSQ5xa3bjTEP6AfH";
+const { API_URL, API_KEY } = window.APP_CONFIG;
 
 const messagesEl = document.getElementById("messages");
 const inputEl    = document.getElementById("userInput");

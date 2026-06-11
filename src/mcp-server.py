@@ -11,6 +11,8 @@ from db.queries import count_events as _count_events
 from db.queries import group_by_count as _group_by_count
 from db.queries import average_severity as _average_severity
 from db.queries import events_per_day as _events_per_day
+from db.queries import events_by_hour as _events_by_hour
+from db.queries import average_events_per_period as _average_events_per_period
 from typing import Literal
 
 mcp = FastMCP("safety-agent")
@@ -247,6 +249,67 @@ def events_per_day(
     Use for trend questions: how many violations per day this week, busiest days, etc."""
 
     return _events_per_day(
+        filters=_filters(
+            camera_name=camera_name,
+            event_type=event_type,
+            severity=severity,
+            reviewed=reviewed,
+            date_start=date_start,
+            date_end=date_end,
+            min_severity=min_severity,
+            max_severity=max_severity,
+        ),
+    )
+
+
+@mcp.tool()
+def average_events_per_period(
+    period: Literal["day", "hour"],
+    camera_name: str | None = None,
+    event_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> float:
+    """Return the average number of events per day or per hour.
+    period='day': average daily event count (total / distinct days).
+    period='hour': average event count per hour slot (total / distinct hours observed).
+    All standard filters apply. Use to answer 'on average how many events per day/hour?'"""
+
+    return _average_events_per_period(
+        period=period,
+        filters=_filters(
+            camera_name=camera_name,
+            event_type=event_type,
+            severity=severity,
+            reviewed=reviewed,
+            date_start=date_start,
+            date_end=date_end,
+            min_severity=min_severity,
+            max_severity=max_severity,
+        ),
+    )
+
+
+@mcp.tool()
+def events_by_hour(
+    camera_name: str | None = None,
+    event_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> list[dict]:
+    """Return the number of safety events grouped by hour of the day (0-23), ordered ascending.
+    Returns a list of {"hour": H, "count": N} dicts.
+    Use for time-of-day pattern questions: busiest hours, peak violation times, night vs day comparison."""
+
+    return _events_by_hour(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,
