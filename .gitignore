@@ -1,4 +1,5 @@
 /data
 .venv
 .env.local
-/data-cleaning/__pycache__
+ui/config.js
+**/__pycache__
