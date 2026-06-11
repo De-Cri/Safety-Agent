@@ -8,3 +8,6 @@ ui/config.js
 tests/mcp_test_report.html
 tests/benchmark_token_MinMax/benchmark_report.html
 tests/benchmark_token_MinMax/benchmark_results.json
+
+# Archivio sorgente per la consegna (generato con git archive)
+*.zip
