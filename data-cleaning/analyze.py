@@ -27,7 +27,7 @@ def parse_trigger(trigger_raw: str) -> list[tuple[str, float]]:
 
 # The dataset packed camera and event type into one "Name" column.
 # One camera fires many distinct event types, so we need them apart to group by either axis.
-# e.g. "Uscita Pedane Bottom Extended: [Operators without Hard Hat]" vs "Uscita Pedane Bottom Extended: [Operators without High Vis Vest]"
+# e.g. "Camera X: [Operators without Hard Hat]" vs "Camera X: [Operators without High Vis Vest]"
 
 def parse_name(name: str) -> tuple[str, str]:
     if ": " in name:

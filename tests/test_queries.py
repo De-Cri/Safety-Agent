@@ -5,12 +5,21 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from db.queries import get_event_by_id, get_events_filtered, get_events_limited
 
 
+# I test girano sul DB reale, quindi niente valori hardcoded nelle assert:
+# peschiamo un evento esistente e verifichiamo la coerenza, non il contenuto.
+def _any_event():
+    events = get_events_limited(1)
+    assert len(events) == 1, "DB vuoto: importare i dati prima dei test"
+    return events[0]
+
+
 def test_get_event_by_id_found():
-    r = get_event_by_id(4594)
+    sample = _any_event()
+    r = get_event_by_id(sample["event_id"])
     assert r is not None
-    assert r["event_id"] == 4594
-    assert r["camera_name"] == "Deposito Pedane Bottom Extended"
-    assert r["severity"] == 8
+    assert r["event_id"] == sample["event_id"]
+    assert r["camera_name"] == sample["camera_name"]
+    assert 1 <= r["severity"] <= 10
     assert isinstance(r["detections"], list)
 
 
@@ -20,10 +29,11 @@ def test_get_event_by_id_not_found():
 
 
 def test_get_events_filtered_valid_column():
-    r = get_events_filtered("camera_name", "Griglia")
+    camera = _any_event()["camera_name"]
+    r = get_events_filtered("camera_name", camera)
     assert isinstance(r, list)
     assert len(r) > 0
-    assert all(e["camera_name"] == "Griglia" for e in r)
+    assert all(e["camera_name"] == camera for e in r)
 
 
 def test_get_events_filtered_no_results():

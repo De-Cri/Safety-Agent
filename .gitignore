@@ -3,3 +3,8 @@
 .env.local
 ui/config.js
 **/__pycache__
+
+# Report generati da test/benchmark: contengono estratti del dataset reale
+tests/mcp_test_report.html
+tests/benchmark_token_MinMax/benchmark_report.html
+tests/benchmark_token_MinMax/benchmark_results.json

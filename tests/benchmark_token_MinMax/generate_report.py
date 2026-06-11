@@ -44,8 +44,8 @@ JUDGES = {
         "score_lean": "✅ Corretta (v2 fix ok)",
         "verdict":    "🟢 LEAN vince",
         "note": (
-            "FULL: Carico Calce 8, Uscita Pedane 8, Griglia 7, Gasolio CAT 6, Cancello JMS 1. "
-            "LEAN v1 (solo camera_name, no event_id): riportava solo Carico Calce — pareggio mancato. "
+            "FULL: classifica corretta delle 5 camere, incluse le due prime a pari merito. "
+            "LEAN v1 (solo camera_name, no event_id): riportava solo una delle due prime — pareggio mancato. "
             "LEAN v2 (fix — event_id + camera_name): identifica correttamente entrambi i vincitori a pari merito. "
             "Il fix ha funzionato perfettamente: event_id come anchor di conteggio è sufficiente. "
             "Risparmio: -3316 input tok (-84%) con qualità identica a FULL."

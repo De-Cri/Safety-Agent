@@ -29,7 +29,7 @@ I tool restituiscono di default solo i campi essenziali (modalità *lean*) e mai
 
 ### Analisi esplorativa dei dati
 
-Plot generati in fase di pulizia dati ([data-cleaning/visualize.py](data-cleaning/visualize.py)):
+I grafici qui sotto sono **esempi generati da dati sintetici** ([data-cleaning/generate_demo_plots.py](data-cleaning/generate_demo_plots.py)): nomi delle telecamere e numeri sono inventati, servono solo a mostrare il tipo di analisi prodotta. Le stesse visualizzazioni girano sul dataset reale (privato, non incluso nel repo) tramite [data-cleaning/visualize.py](data-cleaning/visualize.py):
 
 | | |
 |---|---|
@@ -44,7 +44,7 @@ Confronto tra payload FULL (tutti i campi) e LEAN (solo i campi richiesti dalla 
 
 ![Benchmark token budget](tests/benchmark_token_MinMax/benchmark_token_budget.png)
 
-Report completo: [tests/benchmark_token_MinMax/benchmark_report.html](tests/benchmark_token_MinMax/benchmark_report.html)
+Il report completo (HTML) viene generato in locale da [tests/benchmark_token_MinMax/generate_report.py](tests/benchmark_token_MinMax/generate_report.py) e non è incluso nel repo perché contiene estratti del dataset.
 
 ## Avvio rapido
 
