@@ -1,6 +1,0 @@
-9:30-11 Fare api, trasformare il client.mcp in un endpoint e provare chiamate api da una piccola interfaccia.
-11-12 ricevimento
-12-13 interfaccia js, html,css
-14-15 rifiniture.
-15:30-16:30 power point
-16:30-17:30 finire i report
