@@ -77,7 +77,10 @@ def db_schema() -> str:
         f"- event_type: tipo di violazione DPI. Valori presenti nel DB: {evt_types}\n"
         f"- severity: gravità da 1 a 10 (1-3 bassa, 4-6 media, 7-10 critica)\n"
         f"- reviewed: se l'evento è stato revisionato manualmente (booleano)\n"
-        f"- detections: lista di rilevazioni CV, ognuna con violation_type e confidence (0-100%)\n"
+        f"- detections: lista di rilevazioni CV, ognuna con violation_type e confidence (0-100%)\n\n"
+        f"Filtri comuni: i tool di interrogazione accettano tutti gli stessi filtri opzionali — "
+        f"camera_name, event_type, severity, reviewed (match esatto), "
+        f"date_start/date_end (ISO 8601), min_severity/max_severity (intervallo).\n"
     )
 
 
@@ -110,12 +113,8 @@ def list_events(
     max_severity: int | None = None,
     fields: list[str] | None = None,
 ) -> list[dict]:
-    """List raw safety events, newest first by default, with optional filters.
-    limit: number of events to return (default 10, hard max 20).
-    descending_search_order: true = newest first (default), false = oldest first.
-    camera_name / event_type / severity / reviewed: optional exact-match filters.
-    date_start / date_end: optional ISO 8601 datetime bounds.
-    min_severity / max_severity: filter by severity range (e.g. min_severity=7 for critical events).
+    """List raw safety events, newest first by default (descending_search_order=false for oldest first).
+    limit: default 10, hard max 20. Standard optional filters apply.
     fields: columns to return. Default (None) = lean set [event_id, event_datetime,
     camera_name, event_type, severity]. Pass ["*"] to include reviewed and detections."""
 
@@ -148,10 +147,7 @@ def count_events(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> int:
-    """Count safety events, with optional filters.
-    camera_name / event_type / severity / reviewed: optional exact-match filters.
-    date_start / date_end: ISO 8601 datetime bounds (both optional).
-    min_severity / max_severity: severity range (e.g. min_severity=7 counts only critical events).
+    """Count safety events matching the standard optional filters.
     Use this instead of fetching events and counting manually."""
 
     return _count_events(
@@ -180,13 +176,10 @@ def group_by_count(
     max_severity: int | None = None,
 ) -> list[dict]:
     """Count events grouped by a column, sorted by count descending.
-    Returns a list of {"value": ..., "count": ...} showing every distinct value actually present.
-    camera_name / event_type / severity / reviewed: optional exact-match filters.
-    date_start / date_end: ISO 8601 bounds to restrict the ranking to a time window.
-    min_severity / max_severity: optional severity range filters.
-    Use for: ranking (which camera had the most events, most common violation type), and also
-    to find the highest or lowest severity value actually present in the data for a given period —
-    call with column='severity' and inspect the values returned; do not assume the scale extremes."""
+    Returns [{"value": ..., "count": ...}] with every distinct value present. Standard filters apply.
+    Use for ranking (busiest camera, most common violation) and to find the highest/lowest
+    severity actually present in a period (column='severity', inspect the values —
+    do not assume the scale extremes)."""
 
     return _group_by_count(
         column=column,
@@ -213,10 +206,7 @@ def average_severity(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> float | None:
-    """Compute the average severity (1-10) across events, with optional filters.
-    camera_name / event_type / severity / reviewed: optional exact-match filters.
-    date_start / date_end: ISO 8601 datetime bounds (both optional).
-    min_severity / max_severity: restrict the average to a severity band.
+    """Average severity (1-10) across events. Standard filters apply.
     Returns a float rounded to 2 decimals, or null if no events match."""
 
     return _average_severity(
@@ -243,10 +233,9 @@ def events_per_day(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> list[dict]:
-    """Return the number of safety events per calendar day, ordered by date ascending.
-    Returns a list of {"date": "YYYY-MM-DD", "count": N} dicts.
-    date_start / date_end: ISO 8601 bounds (both optional — omit for the full dataset).
-    Use for trend questions: how many violations per day this week, busiest days, etc."""
+    """Events per calendar day, ordered by date ascending: [{"date": "YYYY-MM-DD", "count": N}].
+    Standard filters apply (omit dates for the full dataset).
+    Use for trend questions: violations per day this week, busiest days, etc."""
 
     return _events_per_day(
         filters=_filters(
@@ -274,10 +263,8 @@ def average_events_per_period(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> float:
-    """Return the average number of events per day or per hour.
-    period='day': average daily event count (total / distinct days).
-    period='hour': average event count per hour slot (total / distinct hours observed).
-    All standard filters apply. Use to answer 'on average how many events per day/hour?'"""
+    """Average number of events per day or per hour (total / distinct periods observed).
+    Standard filters apply. Use for 'on average how many events per day/hour?'"""
 
     return _average_events_per_period(
         period=period,
@@ -305,9 +292,8 @@ def events_by_hour(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> list[dict]:
-    """Return the number of safety events grouped by hour of the day (0-23), ordered ascending.
-    Returns a list of {"hour": H, "count": N} dicts.
-    Use for time-of-day pattern questions: busiest hours, peak violation times, night vs day comparison."""
+    """Events grouped by hour of day (0-23), ascending: [{"hour": H, "count": N}]. Standard filters apply.
+    Use for time-of-day patterns: busiest hours, peak times, night vs day."""
 
     return _events_by_hour(
         filters=_filters(

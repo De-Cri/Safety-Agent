@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Elmetto da cantiere: il soggetto del progetto in 16x16 px -->
+  <circle cx="32" cy="32" r="30" fill="#2d3436"/>
+  <path d="M14 38a18 18 0 0 1 36 0z" fill="#fdcb6e"/>
+  <rect x="28" y="17" width="8" height="9" rx="3" fill="#ffeaa7"/>
+  <rect x="9" y="38" width="46" height="7" rx="3.5" fill="#fdcb6e"/>
+</svg>

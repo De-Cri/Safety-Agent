@@ -35,7 +35,7 @@ def _build_system_instruction(schema_text: str) -> str:
 
 class Agent:
     def __init__(self) -> None:
-        self.gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+        self.gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY_FALLBACK1"])
         self.server_params = StdioServerParameters(command="python", args=[SERVER_SCRIPT])
 
     @asynccontextmanager
@@ -99,6 +99,9 @@ def _extract_usage(response) -> dict:
         "output_tokens":   getattr(u, "candidates_token_count", 0) or 0,
         "total_tokens":    getattr(u, "total_token_count",       0) or 0,
         "thinking_tokens": getattr(u, "thoughts_token_count",    0) or 0,
+        # Prefisso riconosciuto dal caching implicito di Gemini: già contato
+        # in prompt_tokens, ma fatturato a -75%. Se resta a 0, niente cache.
+        "cached_tokens":   getattr(u, "cached_content_token_count", 0) or 0,
     }
 
 
