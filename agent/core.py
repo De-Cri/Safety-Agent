@@ -35,7 +35,7 @@ def _build_system_instruction(schema_text: str) -> str:
 
 class Agent:
     def __init__(self) -> None:
-        self.gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY_FALLBACK1"])
+        self.gemini = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
         self.server_params = StdioServerParameters(command="python", args=[SERVER_SCRIPT])
 
     @asynccontextmanager
