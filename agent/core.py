@@ -67,19 +67,19 @@ class Agent:
         history_before = len(chat_session.get_history() or [])
         response = await chat_session.send_message(user_input)
 
-        tool_results = []
+        tool_calls = []
         new_history = (chat_session.get_history() or [])[history_before:]
         for content in new_history:
             for part in (content.parts or []):
-                fr = getattr(part, "function_response", None)
-                if fr:
-                    tool_results.append({"tool": fr.name, "data": fr.response})
+                fc = getattr(part, "function_call", None)
+                if fc:
+                    tool_calls.append({"tool": fc.name, "args": dict(fc.args or {})})
 
         # Raw tool payloads are huge and already processed — drop them from history
         # so they don't inflate the next request's prompt tokens.
         _strip_tool_responses(chat_session, history_before)
 
-        return response.text or "", tool_results, _extract_usage(response)
+        return response.text or "", tool_calls, _extract_usage(response)
 
     @asynccontextmanager
     async def start(self):

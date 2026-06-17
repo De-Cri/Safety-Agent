@@ -165,7 +165,7 @@ def count_events(
     )
 
 @mcp.tool()
-def group_by_count(
+def rank_by_count(
     column: Literal["camera_name", "event_type", "severity"],
     camera_name: str | None = None,
     event_type: str | None = None,
@@ -176,25 +176,51 @@ def group_by_count(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> list[dict]:
-    """Count events grouped by a column, sorted by count descending.
-    Returns [{"value": ..., "count": ...}] with every distinct value present. Standard filters apply.
-    Use for ranking (busiest camera, most common violation) and to find the highest/lowest
-    severity actually present in a period (column='severity', inspect the values —
-    do not assume the scale extremes)."""
+    """Full ranked list of events grouped by a column: [{"value": ..., "count": ...}], sorted by count desc.
+    Standard filters apply. Use for ranking questions: busiest camera, most common violation,
+    severity distribution — when you need to read and report all values."""
 
     return _group_by_count(
         column=column,
         filters=_filters(
-            camera_name=camera_name,
-            event_type=event_type,
-            severity=severity,
-            reviewed=reviewed,
-            date_start=date_start,
-            date_end=date_end,
-            min_severity=min_severity,
-            max_severity=max_severity,
+            camera_name=camera_name, event_type=event_type, severity=severity,
+            reviewed=reviewed, date_start=date_start, date_end=date_end,
+            min_severity=min_severity, max_severity=max_severity,
         ),
     )
+
+
+@mcp.tool()
+def group_by_count(
+    column: Literal["camera_name", "event_type", "severity"],
+    camera_name: str | None = None,
+    event_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> dict:
+    """Count events grouped by a column + automatic chart. Standard filters apply.
+    Use for ranking (busiest camera, most common violation) and to find the highest/lowest
+    severity actually present in a period (column='severity', inspect the values —
+    do not assume the scale extremes)."""
+
+    data = _group_by_count(column=column, filters=_filters(
+        camera_name=camera_name, event_type=event_type, severity=severity,
+        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"categories": 0}
+    return {
+        "categories": len(data),
+        "top_value": str(data[0]["value"]),
+        "top_count": data[0]["count"],
+        "bottom_value": str(data[-1]["value"]),
+        "bottom_count": data[-1]["count"],
+    }
 
 @mcp.tool()
 def average_severity(
@@ -233,23 +259,20 @@ def events_per_day(
     date_end: datetime | None = None,
     min_severity: int | None = None,
     max_severity: int | None = None,
-) -> list[dict]:
-    """Events per calendar day, ordered by date ascending: [{"date": "YYYY-MM-DD", "count": N}].
-    Standard filters apply (omit dates for the full dataset).
+) -> dict:
+    """Summary of events per calendar day + automatic chart. Standard filters apply.
     Use for trend questions: violations per day this week, busiest days, etc."""
 
-    return _events_per_day(
-        filters=_filters(
-            camera_name=camera_name,
-            event_type=event_type,
-            severity=severity,
-            reviewed=reviewed,
-            date_start=date_start,
-            date_end=date_end,
-            min_severity=min_severity,
-            max_severity=max_severity,
-        ),
-    )
+    data = _events_per_day(filters=_filters(
+        camera_name=camera_name, event_type=event_type, severity=severity,
+        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"total_events": 0, "days": 0}
+    total = sum(r["count"] for r in data)
+    peak = max(data, key=lambda r: r["count"])
+    return {"total_events": total, "days": len(data), "peak_date": peak["date"], "peak_count": peak["count"]}
 
 
 @mcp.tool()
@@ -292,23 +315,25 @@ def events_by_hour(
     date_end: datetime | None = None,
     min_severity: int | None = None,
     max_severity: int | None = None,
-) -> list[dict]:
-    """Events grouped by hour of day (0-23), ascending: [{"hour": H, "count": N}]. Standard filters apply.
+) -> dict:
+    """Summary of events by hour of day + automatic chart. Standard filters apply.
     Use for time-of-day patterns: busiest hours, peak times, night vs day."""
 
-    return _events_by_hour(
-        filters=_filters(
-            camera_name=camera_name,
-            event_type=event_type,
-            severity=severity,
-            reviewed=reviewed,
-            date_start=date_start,
-            date_end=date_end,
-            min_severity=min_severity,
-            max_severity=max_severity,
-        ),
-    )
+    data = _events_by_hour(filters=_filters(
+        camera_name=camera_name, event_type=event_type, severity=severity,
+        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"total_events": 0}
+    total = sum(r["count"] for r in data)
+    peak = max(data, key=lambda r: r["count"])
+    quiet = min(data, key=lambda r: r["count"])
+    return {"total_events": total, "peak_hour": peak["hour"], "peak_count": peak["count"],
+            "quiet_hour": quiet["hour"], "quiet_count": quiet["count"]}
 
+
+_DOW_IT = {0: "Domenica", 1: "Lunedì", 2: "Martedì", 3: "Mercoledì", 4: "Giovedì", 5: "Venerdì", 6: "Sabato"}
 
 @mcp.tool()
 def events_by_weekday_hour(
@@ -320,23 +345,25 @@ def events_by_weekday_hour(
     date_end: datetime | None = None,
     min_severity: int | None = None,
     max_severity: int | None = None,
-) -> list[dict]:
-    """Events grouped by day-of-week and hour of day: [{"weekday": 0-6, "hour": 0-23, "count": N}].
-    weekday follows PostgreSQL convention (0=Sun, 1=Mon, …, 6=Sat). Standard filters apply.
-    Use for heatmap questions: which day+hour combination has the most violations?"""
+) -> dict:
+    """Summary of events by day-of-week × hour-of-day + automatic heatmap chart. Standard filters apply.
+    Use for pattern questions: which day+hour combination has the most violations?"""
 
-    return _events_by_weekday_hour(
-        filters=_filters(
-            camera_name=camera_name,
-            event_type=event_type,
-            severity=severity,
-            reviewed=reviewed,
-            date_start=date_start,
-            date_end=date_end,
-            min_severity=min_severity,
-            max_severity=max_severity,
-        ),
-    )
+    data = _events_by_weekday_hour(filters=_filters(
+        camera_name=camera_name, event_type=event_type, severity=severity,
+        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"total_events": 0}
+    total = sum(r["count"] for r in data)
+    peak = max(data, key=lambda r: r["count"])
+    return {
+        "total_events": total,
+        "peak_weekday": _DOW_IT.get(peak["weekday"], str(peak["weekday"])),
+        "peak_hour": peak["hour"],
+        "peak_count": peak["count"],
+    }
 
 
 # BASIC MATH TOOLS
