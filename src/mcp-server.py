@@ -12,6 +12,7 @@ from db.queries import group_by_count as _group_by_count
 from db.queries import average_severity as _average_severity
 from db.queries import events_per_day as _events_per_day
 from db.queries import events_by_hour as _events_by_hour
+from db.queries import events_by_weekday_hour as _events_by_weekday_hour
 from db.queries import average_events_per_period as _average_events_per_period
 from typing import Literal
 
@@ -296,6 +297,35 @@ def events_by_hour(
     Use for time-of-day patterns: busiest hours, peak times, night vs day."""
 
     return _events_by_hour(
+        filters=_filters(
+            camera_name=camera_name,
+            event_type=event_type,
+            severity=severity,
+            reviewed=reviewed,
+            date_start=date_start,
+            date_end=date_end,
+            min_severity=min_severity,
+            max_severity=max_severity,
+        ),
+    )
+
+
+@mcp.tool()
+def events_by_weekday_hour(
+    camera_name: str | None = None,
+    event_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> list[dict]:
+    """Events grouped by day-of-week and hour of day: [{"weekday": 0-6, "hour": 0-23, "count": N}].
+    weekday follows PostgreSQL convention (0=Sun, 1=Mon, …, 6=Sat). Standard filters apply.
+    Use for heatmap questions: which day+hour combination has the most violations?"""
+
+    return _events_by_weekday_hour(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,

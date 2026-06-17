@@ -48,27 +48,44 @@ async def reset_chat(req: Request):
     return {"ok": True}
 
 
-_CHARTABLE = {"events_per_day", "group_by_count", "events_by_hour"}
+_CHARTABLE = {"events_per_day", "group_by_count", "events_by_hour", "events_by_weekday_hour"}
 
 def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
     if tool == "events_per_day":
-        return ChartData(
-            labels=[r["date"] for r in data],
-            values=[r["count"] for r in data],
-            title="Eventi per giorno",
-        )
+        labels = [r["date"] for r in data]
+        values = [r["count"] for r in data]
+        # calendar heatmap for long periods, line for short ones
+        chart_type = "calendar_heatmap" if len(labels) > 14 else "line"
+        return ChartData(labels=labels, values=values, title="Eventi per giorno", chart_type=chart_type)
+
     if tool == "group_by_count":
-        return ChartData(
-            labels=[r["value"] for r in data],
-            values=[r["count"] for r in data],
-            title="Distribuzione eventi",
-        )
+        labels = [str(r["value"]) for r in data]
+        values = [r["count"] for r in data]
+        chart_type = "pie" if len(labels) <= 6 else "treemap"
+        return ChartData(labels=labels, values=values, title="Distribuzione eventi", chart_type=chart_type)
+
     if tool == "events_by_hour":
         return ChartData(
             labels=[f"{r['hour']:02d}:00" for r in data],
             values=[r["count"] for r in data],
             title="Eventi per ora del giorno",
+            chart_type="bar",
         )
+
+    if tool == "events_by_weekday_hour":
+        # PostgreSQL dow: 0=Sun..6=Sat → convert to 0=Mon..6=Sun
+        matrix = [[0] * 24 for _ in range(7)]
+        for r in data:
+            mon_dow = (int(r["weekday"]) - 1) % 7
+            matrix[mon_dow][int(r["hour"])] = r["count"]
+        return ChartData(
+            labels=[],
+            values=[],
+            title="Distribuzione eventi per giorno e ora",
+            chart_type="heatmap_grid",
+            extra={"matrix": matrix},
+        )
+
     return None
 
 
@@ -86,7 +103,9 @@ async def _to_chart(tool_results: list[dict]) -> str | None:
             data = data.structuredContent.get("result", data)
 
         chart_data = _build_chart_data(tool, data)
-        if not chart_data or not chart_data.labels:
+        if not chart_data:
+            return None
+        if not chart_data.labels and not chart_data.extra:
             return None
 
         loop = asyncio.get_event_loop()

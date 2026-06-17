@@ -240,6 +240,23 @@ def events_by_hour(
         return [{"hour": int(r[0]), "count": r[1]} for r in rows]
 
 
+def events_by_weekday_hour(
+    filters: EventFilters | None = None,
+) -> list[dict]:
+    """Counts grouped by weekday (PostgreSQL dow: 0=Sun..6=Sat) and hour (0-23)."""
+    with SessionLocal() as session:
+        dow_expr  = func.extract("dow",  SafetyEvent.event_datetime)
+        hour_expr = func.extract("hour", SafetyEvent.event_datetime)
+        q = session.query(
+            dow_expr.label("weekday"),
+            hour_expr.label("hour"),
+            func.count(SafetyEvent.event_id).label("count"),
+        )
+        q = _apply_event_filters(q, filters)
+        rows = q.group_by(dow_expr, hour_expr).all()
+        return [{"weekday": int(r[0]), "hour": int(r[1]), "count": r[2]} for r in rows]
+
+
 def events_per_day(
     filters: EventFilters | None = None,
 ) -> list[dict]:
