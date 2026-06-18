@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from sqlalchemy import func, cast
+from sqlalchemy import func, cast, exists as sa_exists
 from sqlalchemy.orm import Query, selectinload
 from sqlalchemy.types import Date
-from db.models import SafetyEvent, SessionLocal
+from db.models import SafetyEvent, EventDetection, SessionLocal
 
 
 EVENT_FIELDS = {"event_id", "event_datetime", "camera_name", "event_type", "severity", "reviewed", "detections"}
@@ -14,6 +14,7 @@ EVENT_FIELDS = {"event_id", "event_datetime", "camera_name", "event_type", "seve
 class EventFilters:
     camera_name: str | None = None
     event_type: str | None = None
+    violation_type: str | None = None  # filtra per detection.violation_type (es. "No Hard Hat")
     severity: int | None = None
     reviewed: bool | None = None
     date_start: datetime | None = None
@@ -85,6 +86,13 @@ def _apply_event_filters(
         q = q.filter(SafetyEvent.severity >= filters.min_severity)
     if filters.max_severity is not None:
         q = q.filter(SafetyEvent.severity <= filters.max_severity)
+    if filters.violation_type is not None:
+        q = q.filter(
+            sa_exists().where(
+                (EventDetection.event_id == SafetyEvent.event_id) &
+                (EventDetection.violation_type == filters.violation_type)
+            )
+        )
     return q
 
 
@@ -133,17 +141,19 @@ def get_events_limited(
 def get_db_summary() -> dict:
     """Returns distinct values and date range for dynamic prompt injection."""
     with SessionLocal() as session:
-        cameras    = [r[0] for r in session.query(SafetyEvent.camera_name).distinct().all() if r[0]]
-        evt_types  = [r[0] for r in session.query(SafetyEvent.event_type).distinct().all() if r[0]]
+        cameras         = [r[0] for r in session.query(SafetyEvent.camera_name).distinct().all() if r[0]]
+        evt_types       = [r[0] for r in session.query(SafetyEvent.event_type).distinct().all() if r[0]]
+        violation_types = [r[0] for r in session.query(EventDetection.violation_type).distinct().all() if r[0]]
         date_min   = session.query(SafetyEvent.event_datetime).order_by(SafetyEvent.event_datetime.asc()).limit(1).scalar()
         date_max   = session.query(SafetyEvent.event_datetime).order_by(SafetyEvent.event_datetime.desc()).limit(1).scalar()
         total      = session.query(SafetyEvent).count()
     return {
-        "cameras":    sorted(cameras),
-        "event_types": sorted(evt_types),
-        "date_min":   date_min.isoformat() if date_min else None,
-        "date_max":   date_max.isoformat() if date_max else None,
-        "total":      total,
+        "cameras":         sorted(cameras),
+        "event_types":     sorted(evt_types),
+        "violation_types": sorted(violation_types),
+        "date_min":        date_min.isoformat() if date_min else None,
+        "date_max":        date_max.isoformat() if date_max else None,
+        "total":           total,
     }
 
 
@@ -257,6 +267,22 @@ def events_by_weekday_hour(
         return [{"weekday": int(r[0]), "hour": int(r[1]), "count": r[2]} for r in rows]
 
 
+def events_per_day_by_type(
+    filters: EventFilters | None = None,
+) -> list[dict]:
+    """Counts grouped by (date, event_type): [{"date": "YYYY-MM-DD", "event_type": "...", "count": N}]."""
+    with SessionLocal() as session:
+        date_col = cast(SafetyEvent.event_datetime, Date)
+        q = session.query(
+            date_col.label("date"),
+            SafetyEvent.event_type,
+            func.count(SafetyEvent.event_id).label("count"),
+        )
+        q = _apply_event_filters(q, filters)
+        rows = q.group_by(date_col, SafetyEvent.event_type).order_by(date_col).all()
+        return [{"date": str(r[0]), "event_type": r[1], "count": r[2]} for r in rows]
+
+
 def events_per_day(
     filters: EventFilters | None = None,
 ) -> list[dict]:
@@ -266,5 +292,40 @@ def events_per_day(
         q = _apply_event_filters(q, filters)
         rows = q.group_by(date_col).order_by(date_col).all()
         return [{"date": str(r[0]), "count": r[1]} for r in rows]
+
+
+def group_by_violation_type(
+    filters: EventFilters | None = None,
+) -> list[dict]:
+    """Conta eventi distinti raggruppati per violation_type da EventDetection."""
+    with SessionLocal() as session:
+        cnt = func.count(func.distinct(EventDetection.event_id))
+        q = (
+            session.query(EventDetection.violation_type, cnt)
+            .join(SafetyEvent, EventDetection.event_id == SafetyEvent.event_id)
+        )
+        q = _apply_event_filters(q, filters)
+        rows = q.group_by(EventDetection.violation_type).order_by(cnt.desc()).all()
+        return [{"value": r[0], "count": r[1]} for r in rows]
+
+
+def events_per_day_by_violation_type(
+    filters: EventFilters | None = None,
+) -> list[dict]:
+    """Conta eventi distinti raggruppati per (data, violation_type)."""
+    with SessionLocal() as session:
+        date_col = cast(SafetyEvent.event_datetime, Date)
+        cnt = func.count(func.distinct(SafetyEvent.event_id))
+        q = (
+            session.query(date_col.label("date"), EventDetection.violation_type, cnt)
+            .join(EventDetection, SafetyEvent.event_id == EventDetection.event_id)
+        )
+        q = _apply_event_filters(q, filters)
+        rows = (
+            q.group_by(date_col, EventDetection.violation_type)
+             .order_by(date_col)
+             .all()
+        )
+        return [{"date": str(r[0]), "violation_type": r[1], "count": r[2]} for r in rows]
 
 

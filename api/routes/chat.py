@@ -10,9 +10,12 @@ from api.auth import require_api_key
 from db.queries import (
     EventFilters,
     events_per_day as _db_events_per_day,
+    events_per_day_by_type as _db_events_per_day_by_type,
     events_by_hour as _db_events_by_hour,
     events_by_weekday_hour as _db_events_by_weekday_hour,
     group_by_count as _db_group_by_count,
+    group_by_violation_type as _db_group_by_violation_type,
+    events_per_day_by_violation_type as _db_events_per_day_by_violation_type,
 )
 
 router = APIRouter(dependencies=[Depends(require_api_key)])
@@ -56,7 +59,29 @@ async def reset_chat(req: Request):
     return {"ok": True}
 
 
-_CHARTABLE = {"events_per_day", "group_by_count", "events_by_hour", "events_by_weekday_hour"}
+_CHARTABLE = {
+    "events_per_day", "group_by_count", "events_by_hour",
+    "events_by_weekday_hour", "events_per_day_by_type",
+    "group_by_violation_type", "events_per_day_by_violation_type",
+}
+
+_TYPE_IT = {
+    "Event No Hard Hat": "Senza caschetto",
+    "Event No High Vis Vest": "Senza gilet",
+    "Event Vehicle-Operator Distance": "Dist. veicolo-op.",
+    "Event Vehicle-Vehicle Distance": "Dist. veicolo-veicolo",
+    "Operators Event": "Rischio operatori",
+    "Operators Event-2": "Rischio operatori (var. 2)",
+    "Operators without Hard Hat (0,7)": "Op. senza caschetto",
+    "Operators without High Vis Vest": "Op. senza gilet",
+}
+
+_VIOLATION_IT = {
+    "No Hard Hat":      "Senza caschetto",
+    "No High Vis vest": "Senza gilet",
+    "No Face cover":    "Senza visiera",
+    "person":           "Persona rilevata",
+}
 
 
 def _args_to_filters(args: dict) -> EventFilters:
@@ -67,6 +92,7 @@ def _args_to_filters(args: dict) -> EventFilters:
     return EventFilters(
         camera_name=args.get("camera_name"),
         event_type=args.get("event_type"),
+        violation_type=args.get("violation_type"),
         severity=args.get("severity"),
         reviewed=args.get("reviewed"),
         date_start=_dt(args.get("date_start")),
@@ -78,10 +104,15 @@ def _args_to_filters(args: dict) -> EventFilters:
 
 def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
     if tool == "events_per_day":
-        labels = [r["date"] for r in data]
+        raw_dates = [r["date"] for r in data]
         values = [r["count"] for r in data]
-        chart_type = "calendar_heatmap" if len(labels) > 14 else "line"
-        return ChartData(labels=labels, values=values, title="Eventi per giorno", chart_type=chart_type)
+        if len(raw_dates) > 60:
+            # calendar heatmap parses YYYY-MM-DD internamente
+            return ChartData(labels=raw_dates, values=values, title="Eventi per giorno", chart_type="calendar_heatmap")
+        else:
+            # line chart mostra le label all'utente → DD/MM/YYYY
+            labels = [f"{d[8:10]}/{d[5:7]}/{d[0:4]}" for d in raw_dates]
+            return ChartData(labels=labels, values=values, title="Eventi per giorno", chart_type="line")
 
     if tool == "group_by_count":
         labels = [str(r["value"]) for r in data]
@@ -110,6 +141,48 @@ def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
             extra={"matrix": matrix},
         )
 
+    if tool == "events_per_day_by_type":
+        dates = sorted({r["date"] for r in data})
+        types = sorted({r["event_type"] for r in data})
+        date_idx = {d: i for i, d in enumerate(dates)}
+        type_idx = {t: i for i, t in enumerate(types)}
+        matrix = [[0] * len(dates) for _ in range(len(types))]
+        for r in data:
+            matrix[type_idx[r["event_type"]]][date_idx[r["date"]]] = r["count"]
+        row_labels = [_TYPE_IT.get(t, t) for t in types]
+        col_labels = [f"{d[8:10]}/{d[5:7]}" for d in dates]
+        return ChartData(
+            labels=[],
+            values=[],
+            title="Eventi per giorno per tipo",
+            chart_type="heatmap_grid",
+            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Giorno"},
+        )
+
+    if tool == "group_by_violation_type":
+        labels = [_VIOLATION_IT.get(r["value"], r["value"]) for r in data]
+        values = [r["count"] for r in data]
+        chart_type = "pie" if len(labels) <= 6 else "treemap"
+        return ChartData(labels=labels, values=values, title="Distribuzione per tipo di violazione", chart_type=chart_type)
+
+    if tool == "events_per_day_by_violation_type":
+        dates = sorted({r["date"] for r in data})
+        vtypes = sorted({r["violation_type"] for r in data})
+        date_idx = {d: i for i, d in enumerate(dates)}
+        vtype_idx = {t: i for i, t in enumerate(vtypes)}
+        matrix = [[0] * len(dates) for _ in range(len(vtypes))]
+        for r in data:
+            matrix[vtype_idx[r["violation_type"]]][date_idx[r["date"]]] = r["count"]
+        row_labels = [_VIOLATION_IT.get(t, t) for t in vtypes]
+        col_labels = [f"{d[8:10]}/{d[5:7]}" for d in dates]
+        return ChartData(
+            labels=[],
+            values=[],
+            title="Violazioni per giorno per tipo",
+            chart_type="heatmap_grid",
+            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Giorno"},
+        )
+
     return None
 
 
@@ -132,6 +205,12 @@ async def _to_chart(tool_calls: list[dict]) -> str | None:
             data = await loop.run_in_executor(None, lambda: _db_events_by_hour(filters))
         elif tool == "events_by_weekday_hour":
             data = await loop.run_in_executor(None, lambda: _db_events_by_weekday_hour(filters))
+        elif tool == "events_per_day_by_type":
+            data = await loop.run_in_executor(None, lambda: _db_events_per_day_by_type(filters))
+        elif tool == "group_by_violation_type":
+            data = await loop.run_in_executor(None, lambda: _db_group_by_violation_type(filters))
+        elif tool == "events_per_day_by_violation_type":
+            data = await loop.run_in_executor(None, lambda: _db_events_per_day_by_violation_type(filters))
         else:
             return None
 

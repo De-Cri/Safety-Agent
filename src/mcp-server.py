@@ -13,6 +13,9 @@ from db.queries import average_severity as _average_severity
 from db.queries import events_per_day as _events_per_day
 from db.queries import events_by_hour as _events_by_hour
 from db.queries import events_by_weekday_hour as _events_by_weekday_hour
+from db.queries import events_per_day_by_type as _events_per_day_by_type
+from db.queries import group_by_violation_type as _group_by_violation_type
+from db.queries import events_per_day_by_violation_type as _events_per_day_by_violation_type
 from db.queries import average_events_per_period as _average_events_per_period
 from typing import Literal
 
@@ -41,6 +44,7 @@ def _requested_fields(fields: list[str] | None, default: set[str]) -> set[str]:
 def _filters(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -51,6 +55,7 @@ def _filters(
     return EventFilters(
         camera_name=camera_name,
         event_type=event_type,
+        violation_type=violation_type,
         severity=severity,
         reviewed=reviewed,
         date_start=date_start,
@@ -65,8 +70,9 @@ def _filters(
 def db_schema() -> str:
     """Live DB schema: distinct cameras, event types, date range, total events."""
     s = _get_db_summary()
-    cameras    = ", ".join(s["cameras"])    or "N/A"
-    evt_types  = ", ".join(s["event_types"]) or "N/A"
+    cameras         = ", ".join(s["cameras"])          or "N/A"
+    evt_types       = ", ".join(s["event_types"])       or "N/A"
+    violation_types = ", ".join(s["violation_types"])   or "N/A"
     return (
         f"## Schema del database (live)\n"
         f"Totale eventi: {s['total']}\n"
@@ -75,13 +81,18 @@ def db_schema() -> str:
         f"- event_id: ID numerico univoco\n"
         f"- event_datetime: data e ora della rilevazione (ISO 8601)\n"
         f"- camera_name: nome dell'area/telecamera. Valori presenti nel DB: {cameras}\n"
-        f"- event_type: tipo di violazione DPI. Valori presenti nel DB: {evt_types}\n"
+        f"- event_type: nome commerciale dell'evento (specifico per telecamera, non descrittivo della violazione). Valori: {evt_types}\n"
         f"- severity: gravità da 1 a 10 (1-3 bassa, 4-6 media, 7-10 critica)\n"
         f"- reviewed: se l'evento è stato revisionato manualmente (booleano)\n"
         f"- detections: lista di rilevazioni CV, ognuna con violation_type e confidence (0-100%)\n\n"
-        f"Filtri comuni: i tool di interrogazione accettano tutti gli stessi filtri opzionali — "
-        f"camera_name, event_type, severity, reviewed (match esatto), "
+        f"## Tipi di violazione reali (violation_type nelle detections)\n"
+        f"Valori presenti nel DB: {violation_types}\n"
+        f"IMPORTANTE: per filtrare o raggruppare per tipo di violazione DPI usa SEMPRE violation_type, "
+        f"non event_type. event_type è il nome generico dell'evento della telecamera e non identifica "
+        f"la violazione specifica.\n\n"
+        f"Filtri comuni: i tool accettano — camera_name, violation_type, severity, reviewed (match esatto), "
         f"date_start/date_end (ISO 8601), min_severity/max_severity (intervallo).\n"
+        f"event_type è disponibile ma usalo solo se vuoi filtrare per nome evento specifico della telecamera.\n"
     )
 
 
@@ -106,6 +117,7 @@ def list_events(
     descending_search_order: bool = True,
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -116,6 +128,7 @@ def list_events(
 ) -> list[dict]:
     """List raw safety events, newest first by default (descending_search_order=false for oldest first).
     limit: default 10, hard max 20. Standard optional filters apply.
+    violation_type: filtra per tipo di violazione reale (es. "No Hard Hat", "No High Vis vest").
     fields: columns to return. Default (None) = lean set [event_id, event_datetime,
     camera_name, event_type, severity]. Pass ["*"] to include reviewed and detections."""
 
@@ -125,6 +138,7 @@ def list_events(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,
+            violation_type=violation_type,
             severity=severity,
             reviewed=reviewed,
             date_start=date_start,
@@ -141,6 +155,7 @@ def list_events(
 def count_events(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -155,6 +170,7 @@ def count_events(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,
+            violation_type=violation_type,
             severity=severity,
             reviewed=reviewed,
             date_start=date_start,
@@ -169,6 +185,7 @@ def rank_by_count(
     column: Literal["camera_name", "event_type", "severity"],
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -177,14 +194,14 @@ def rank_by_count(
     max_severity: int | None = None,
 ) -> list[dict]:
     """Full ranked list of events grouped by a column: [{"value": ..., "count": ...}], sorted by count desc.
-    Standard filters apply. Use for ranking questions: busiest camera, most common violation,
-    severity distribution — when you need to read and report all values."""
+    Standard filters apply. Use for ranking questions: busiest camera, severity distribution —
+    when you need to read and report all values. For violation ranking use rank_by_violation_type."""
 
     return _group_by_count(
         column=column,
         filters=_filters(
-            camera_name=camera_name, event_type=event_type, severity=severity,
-            reviewed=reviewed, date_start=date_start, date_end=date_end,
+            camera_name=camera_name, event_type=event_type, violation_type=violation_type,
+            severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
             min_severity=min_severity, max_severity=max_severity,
         ),
     )
@@ -192,9 +209,10 @@ def rank_by_count(
 
 @mcp.tool()
 def group_by_count(
-    column: Literal["camera_name", "event_type", "severity"],
+    column: Literal["camera_name", "severity"],
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -202,14 +220,13 @@ def group_by_count(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> dict:
-    """Count events grouped by a column + automatic chart. Standard filters apply.
-    Use for ranking (busiest camera, most common violation) and to find the highest/lowest
-    severity actually present in a period (column='severity', inspect the values —
-    do not assume the scale extremes)."""
+    """Count events grouped by camera_name or severity + automatic chart. Standard filters apply.
+    Use for camera distribution or severity distribution charts.
+    Per raggruppare per tipo di violazione usa group_by_violation_type invece."""
 
     data = _group_by_count(column=column, filters=_filters(
-        camera_name=camera_name, event_type=event_type, severity=severity,
-        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        camera_name=camera_name, event_type=event_type, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
         min_severity=min_severity, max_severity=max_severity,
     ))
     if not data:
@@ -226,6 +243,7 @@ def group_by_count(
 def average_severity(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -240,6 +258,7 @@ def average_severity(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,
+            violation_type=violation_type,
             severity=severity,
             reviewed=reviewed,
             date_start=date_start,
@@ -249,10 +268,12 @@ def average_severity(
         ),
     )
 
+
 @mcp.tool()
 def events_per_day(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -261,11 +282,12 @@ def events_per_day(
     max_severity: int | None = None,
 ) -> dict:
     """Summary of events per calendar day + automatic chart. Standard filters apply.
-    Use for trend questions: violations per day this week, busiest days, etc."""
+    Use for trend questions: violations per day this week, busiest days, etc.
+    violation_type filtra per tipo di violazione reale (es. "No Hard Hat")."""
 
     data = _events_per_day(filters=_filters(
-        camera_name=camera_name, event_type=event_type, severity=severity,
-        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        camera_name=camera_name, event_type=event_type, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
         min_severity=min_severity, max_severity=max_severity,
     ))
     if not data:
@@ -280,6 +302,7 @@ def average_events_per_period(
     period: Literal["day", "hour"],
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -295,6 +318,7 @@ def average_events_per_period(
         filters=_filters(
             camera_name=camera_name,
             event_type=event_type,
+            violation_type=violation_type,
             severity=severity,
             reviewed=reviewed,
             date_start=date_start,
@@ -309,6 +333,7 @@ def average_events_per_period(
 def events_by_hour(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -320,8 +345,8 @@ def events_by_hour(
     Use for time-of-day patterns: busiest hours, peak times, night vs day."""
 
     data = _events_by_hour(filters=_filters(
-        camera_name=camera_name, event_type=event_type, severity=severity,
-        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        camera_name=camera_name, event_type=event_type, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
         min_severity=min_severity, max_severity=max_severity,
     ))
     if not data:
@@ -339,6 +364,7 @@ _DOW_IT = {0: "Domenica", 1: "Lunedì", 2: "Martedì", 3: "Mercoledì", 4: "Giov
 def events_by_weekday_hour(
     camera_name: str | None = None,
     event_type: str | None = None,
+    violation_type: str | None = None,
     severity: int | None = None,
     reviewed: bool | None = None,
     date_start: datetime | None = None,
@@ -350,8 +376,8 @@ def events_by_weekday_hour(
     Use for pattern questions: which day+hour combination has the most violations?"""
 
     data = _events_by_weekday_hour(filters=_filters(
-        camera_name=camera_name, event_type=event_type, severity=severity,
-        reviewed=reviewed, date_start=date_start, date_end=date_end,
+        camera_name=camera_name, event_type=event_type, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
         min_severity=min_severity, max_severity=max_severity,
     ))
     if not data:
@@ -362,6 +388,100 @@ def events_by_weekday_hour(
         "total_events": total,
         "peak_weekday": _DOW_IT.get(peak["weekday"], str(peak["weekday"])),
         "peak_hour": peak["hour"],
+        "peak_count": peak["count"],
+    }
+
+
+_VIOLATION_IT = {
+    "No Hard Hat":     "mancato uso del caschetto",
+    "No High Vis vest": "mancato uso del gilet",
+    "No Face cover":   "mancato uso della visiera",
+    "person":          "persona rilevata (distanza veicolo)",
+}
+
+@mcp.tool()
+def rank_by_violation_type(
+    camera_name: str | None = None,
+    violation_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> list[dict]:
+    """Full ranked list of events grouped by violation_type (tipo di violazione DPI reale).
+    Restituisce [{"value": "No Hard Hat", "count": N}, ...] ordinato per count desc.
+    Usa questo invece di rank_by_count per domande su violazioni DPI specifiche."""
+
+    return _group_by_violation_type(filters=_filters(
+        camera_name=camera_name, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+
+
+@mcp.tool()
+def group_by_violation_type(
+    camera_name: str | None = None,
+    violation_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> dict:
+    """Conta eventi per tipo di violazione DPI reale + grafico automatico (torta o treemap).
+    Usa questo per rispondere a 'quale violazione è più comune?' o per mostrare la distribuzione
+    delle violazioni. NON usare group_by_count(column='event_type') per questo scopo."""
+
+    data = _group_by_violation_type(filters=_filters(
+        camera_name=camera_name, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"categories": 0}
+    return {
+        "categories": len(data),
+        "top_value": data[0]["value"],
+        "top_count": data[0]["count"],
+        "bottom_value": data[-1]["value"],
+        "bottom_count": data[-1]["count"],
+    }
+
+
+@mcp.tool()
+def events_per_day_by_violation_type(
+    camera_name: str | None = None,
+    violation_type: str | None = None,
+    severity: int | None = None,
+    reviewed: bool | None = None,
+    date_start: datetime | None = None,
+    date_end: datetime | None = None,
+    min_severity: int | None = None,
+    max_severity: int | None = None,
+) -> dict:
+    """Conta eventi per (giorno × tipo di violazione DPI reale) + heatmap automatica.
+    Usa quando l'utente chiede i dati per giorno divisi per tipo di violazione.
+    Più preciso di events_per_day_by_type perché usa violation_type dalle detections."""
+
+    data = _events_per_day_by_violation_type(filters=_filters(
+        camera_name=camera_name, violation_type=violation_type,
+        severity=severity, reviewed=reviewed, date_start=date_start, date_end=date_end,
+        min_severity=min_severity, max_severity=max_severity,
+    ))
+    if not data:
+        return {"total_events": 0, "violation_types": 0}
+    total = sum(r["count"] for r in data)
+    types = len({r["violation_type"] for r in data})
+    peak = max(data, key=lambda r: r["count"])
+    return {
+        "total_events": total,
+        "violation_types": types,
+        "peak_date": peak["date"],
+        "peak_type": _VIOLATION_IT.get(peak["violation_type"], peak["violation_type"]),
         "peak_count": peak["count"],
     }
 
