@@ -68,16 +68,11 @@ class Agent:
         response = await chat_session.send_message(user_input)
 
         tool_calls = []
-        new_history = (chat_session.get_history() or [])[history_before:]
-        for content in new_history:
+        for content in (chat_session.get_history() or [])[history_before:]:
             for part in (content.parts or []):
                 fc = getattr(part, "function_call", None)
                 if fc:
                     tool_calls.append({"tool": fc.name, "args": dict(fc.args or {})})
-
-        # Raw tool payloads are huge and already processed — drop them from history
-        # so they don't inflate the next request's prompt tokens.
-        _strip_tool_responses(chat_session, history_before)
 
         return response.text or "", tool_calls, _extract_usage(response)
 
@@ -108,16 +103,6 @@ def _extract_usage(response) -> dict:
         # in prompt_tokens, ma fatturato a -75%. Se resta a 0, niente cache.
         "cached_tokens":   getattr(u, "cached_content_token_count", 0) or 0,
     }
-
-
-def _strip_tool_responses(chat_session, from_index: int) -> None:
-    """Replace function_response payloads added in this turn with an empty dict.
-    The model already used the data; keeping the raw JSON only inflates future prompts."""
-    for content in (chat_session._curated_history or [])[from_index:]:
-        for part in (content.parts or []):
-            fr = getattr(part, "function_response", None)
-            if fr and hasattr(fr, "response"):
-                fr.response = {}
 
 
 def _trim_history(chat_session, keep_turns: int) -> None:
