@@ -74,7 +74,7 @@ async function sendMessage() {
     typingRow.remove();
 
     if (!res.ok) {
-      appendMessage("agent", `Errore ${res.status}: impossibile ottenere una risposta.`);
+      appendMessage("agent", `Error ${res.status}: could not get a response.`);
       return;
     }
 
@@ -85,7 +85,7 @@ async function sendMessage() {
     }
   } catch {
     typingRow.remove();
-    appendMessage("agent", "Errore di rete: assicurati che il server sia avviato.");
+    appendMessage("agent", "Network error: make sure the server is running.");
   } finally {
     sendBtn.disabled = false;
     inputEl.focus();
@@ -112,9 +112,9 @@ function buildWelcome() {
   const div = document.createElement("div");
   div.className = "welcome";
   const h2 = document.createElement("h2");
-  h2.textContent = "Ciao, come posso aiutarti?";
+  h2.textContent = "Hi, how can I help you?";
   const p = document.createElement("p");
-  p.textContent = "Chiedimi informazioni sugli eventi di sicurezza registrati dalle telecamere.";
+  p.textContent = "Ask me about the safety events recorded by the cameras.";
   div.appendChild(h2);
   div.appendChild(p);
   return div;

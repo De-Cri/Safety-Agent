@@ -1,12 +1,12 @@
-"""Rigenera i grafici in data-cleaning/plots/ con dati sintetici.
+"""Regenerate the charts in data-cleaning/plots/ with synthetic data.
 
-I grafici nel README non devono contenere dati reali: nomi di telecamere,
-volumi e distribuzioni del dataset vero restano privati. Qui costruiamo un
-DataFrame con la stessa forma di quello prodotto da visualize.load() ma con
-camere inventate e conteggi campionati a caso, poi riusiamo le stesse
-funzioni di plot così lo stile resta identico.
+The charts in the README must not contain real data: camera names,
+volumes, and distributions of the real dataset stay private. Here we build a
+DataFrame with the same shape as the one produced by visualize.load() but with
+made-up cameras and randomly sampled counts, then reuse the same plot
+functions so the style stays identical.
 
-Uso (dalla root del repo, i path di salvataggio sono relativi):
+Usage (from the repo root, the save paths are relative):
     python data-cleaning/generate_demo_plots.py
 """
 
@@ -17,34 +17,34 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-# visualize.py vive in una cartella con il trattino, quindi niente import
-# di package: aggiungiamo la cartella al path e basta.
+# visualize.py lives in a folder with a hyphen, so no package import:
+# we just add the folder to the path.
 sys.path.insert(0, str(Path(__file__).parent))
 import visualize  # noqa: E402
 
-rng = np.random.default_rng(42)  # seed fisso: stessi grafici a ogni run
+rng = np.random.default_rng(42)  # fixed seed: same charts on every run
 
-# Nomi di fantasia con un'aria industriale credibile
+# Made-up names with a believable industrial feel
 CAMERAS = [
-    "Ingresso Nord",
-    "Banchina Carico",
-    "Magazzino A",
-    "Piazzale Est",
-    "Linea Confezionamento",
-    "Uscita Sud",
-    "Deposito Materiali",
-    "Officina",
+    "North Entrance",
+    "Loading Dock",
+    "Warehouse A",
+    "East Yard",
+    "Packaging Line",
+    "South Exit",
+    "Materials Store",
+    "Workshop",
 ]
-# Pesi diversi per camera: un grafico dove tutte le barre sono uguali
-# non somiglia a nessun impianto reale
+# Different weights per camera: a chart where all bars are equal
+# does not resemble any real plant
 CAMERA_WEIGHTS = np.array([8, 6, 5, 4, 3, 2, 1.5, 1])
 CAMERA_WEIGHTS = CAMERA_WEIGHTS / CAMERA_WEIGHTS.sum()
 
 VIOLATIONS = ["No Hard Hat", "No High Vis vest", "No Face cover", "person"]
 VIOLATION_WEIGHTS = np.array([0.55, 0.30, 0.10, 0.05])
 
-# Le violazioni si concentrano nei cambi turno e dopo pranzo, di notte
-# quasi nulla: la stessa forma che ci si aspetta da un impianto vero.
+# Violations cluster around shift changes and after lunch, at night
+# almost nothing: the same shape you'd expect from a real plant.
 HOUR_WEIGHTS = np.array(
     [0.2, 0.1, 0.1, 0.1, 0.3, 1, 3, 6, 5, 4, 3.5, 3, 2, 5, 4.5, 4, 3.5, 4, 3, 1.5, 0.8, 0.5, 0.3, 0.2]
 )
@@ -62,13 +62,13 @@ def make_demo_df() -> pd.DataFrame:
     hours = rng.choice(24, size=N_EVENTS, p=HOUR_WEIGHTS)
     minutes = rng.integers(0, 60, size=N_EVENTS)
 
-    # Severity alta per i DPI mancanti, bassa per le detection generiche
+    # High severity for missing PPE, low for generic detections
     severity = np.where(
         np.isin(violations, ["No Hard Hat", "No High Vis vest"]),
         rng.integers(5, 9, size=N_EVENTS),
         rng.integers(1, 5, size=N_EVENTS),
     )
-    # Quasi sempre una persona sola nel frame, ogni tanto un gruppetto
+    # Almost always a single person in the frame, occasionally a small group
     n_detections = rng.choice([1, 2, 3], size=N_EVENTS, p=[0.82, 0.13, 0.05])
 
     rows = []
@@ -91,13 +91,13 @@ def make_demo_df() -> pd.DataFrame:
 
 def main():
     df = make_demo_df()
-    print(f"Dataset sintetico: {len(df)} eventi, {df['camera'].nunique()} camere\n")
+    print(f"Synthetic dataset: {len(df)} events, {df['camera'].nunique()} cameras\n")
     visualize.plot_violations_by_camera(df)
     visualize.plot_events_by_hour(df)
     visualize.plot_daily_trend(df)
     visualize.plot_severity_heatmap(df)
     visualize.plot_multi_detections(df)
-    print("\nGrafici demo salvati in data-cleaning/plots/")
+    print("\nDemo charts saved to data-cleaning/plots/")
 
 
 if __name__ == "__main__":

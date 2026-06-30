@@ -1,0 +1,975 @@
+{
+  "meta": {
+    "version": "1.0",
+    "created": "2026-06-18",
+    "dataset_snapshot": {
+      "total_events": 2090,
+      "date_min": "2026-04-07T17:55:52",
+      "date_max": "2026-05-06T19:57:20",
+      "cameras": [
+        "Cancello JMS", "Carico Calce", "Deposito Pedane Bottom Extended",
+        "Est. Magazzino SX", "Gasolio CAT", "Griglia",
+        "M. P. Dosatori", "Materie Prime", "P.le Box Mulini",
+        "Uscita Pedane Bottom Extended"
+      ],
+      "violation_types": ["No Face cover", "No Hard Hat", "No High Vis vest", "car", "person", "truck"]
+    },
+    "framework": "T-Eval",
+    "t_eval_dimensions": {
+      "R": "Retrieve — tool selection is the primary challenge",
+      "U": "Understand/Instruct — parameter extraction is the primary challenge",
+      "V": "Review — answer correctness and format quality is the primary challenge"
+    },
+    "tool_distribution": {
+      "get_event_by_id": 3,
+      "list_events": 5,
+      "count_events": 8,
+      "rank_by_count": 5,
+      "group_by_count": 4,
+      "rank_by_violation_type": 5,
+      "group_by_violation_type": 4,
+      "average_severity": 5,
+      "events_per_day": 4,
+      "average_events_per_period": 3,
+      "events_by_hour": 4,
+      "events_by_weekday_hour": 3,
+      "events_per_day_by_violation_type": 2,
+      "multi_tool": 3,
+      "out_of_scope": 10
+    }
+  },
+
+  "test_cases": [
+
+    {
+      "id": "T001",
+      "tool": "count_events",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Quanti eventi di sicurezza ci sono in totale nel database?",
+      "expected_tool": "count_events",
+      "expected_args": {},
+      "ground_truth": 2090,
+      "ground_truth_type": "exact_integer",
+      "notes": "Domanda baseline. Il rischio è che l'agente usi list_events + conteggio manuale invece del tool dedicato."
+    },
+    {
+      "id": "T002",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanti eventi ha rilevato la telecamera Gasolio CAT?",
+      "expected_tool": "count_events",
+      "expected_args": {"camera_name": "Gasolio CAT"},
+      "ground_truth": 295,
+      "ground_truth_type": "exact_integer",
+      "notes": "Filtro camera_name su singola telecamera."
+    },
+    {
+      "id": "T003",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi critici sono stati registrati? Considero critici quelli con severità 7 o superiore.",
+      "expected_tool": "count_events",
+      "expected_args": {"min_severity": 7},
+      "ground_truth": 1306,
+      "ground_truth_type": "exact_integer",
+      "notes": "Il modello deve usare min_severity=7, non severity=7 (che restituirebbe solo 56)."
+    },
+    {
+      "id": "T004",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi sono stati registrati nel mese di aprile?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": 1462,
+      "ground_truth_type": "exact_integer",
+      "notes": "Il modello deve costruire correttamente i bounds ISO 8601 per aprile."
+    },
+    {
+      "id": "T005",
+      "tool": "count_events",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Nessuno degli eventi è stato ancora revisionato manualmente, vero? Fammi una conferma con il numero.",
+      "expected_tool": "count_events",
+      "expected_args": {"reviewed": false},
+      "ground_truth": "Conferma che nessun evento è stato revisionato. È corretta sia la formulazione '0 eventi revisionati' sia '2090 eventi non revisionati': entrambe confermano lo stesso fatto.",
+      "ground_truth_type": "judge",
+      "notes": "Item ambiguo per costruzione: la conferma può passare dal campo reviewed=false (2090) o reviewed=true (0). Conta che la risposta confermi che nessuno è stato revisionato."
+    },
+    {
+      "id": "T006",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanti eventi hanno severità esattamente pari a 8?",
+      "expected_tool": "count_events",
+      "expected_args": {"severity": 8},
+      "ground_truth": 1250,
+      "ground_truth_type": "exact_integer",
+      "notes": "Match esatto su severity. Utile per capire se il modello distingue severity da min_severity."
+    },
+    {
+      "id": "T007",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Quanti eventi ha registrato la telecamera Griglia nel mese di maggio?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "camera_name": "Griglia",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": 68,
+      "ground_truth_type": "exact_integer",
+      "notes": "Filtro combinato camera + date range. Il modello deve costruire entrambi correttamente."
+    },
+    {
+      "id": "T008",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi sono di media o bassa gravità, cioè con severità 6 o inferiore?",
+      "expected_tool": "count_events",
+      "expected_args": {"max_severity": 6},
+      "ground_truth": 784,
+      "ground_truth_type": "exact_integer",
+      "notes": "Il modello deve usare max_severity=6. Zero eventi hanno severity 1-4 nel dataset."
+    },
+
+    {
+      "id": "T009",
+      "tool": "rank_by_count",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Quale telecamera ha registrato più eventi in assoluto?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {"column": "camera_name"},
+      "ground_truth": "Uscita Pedane Bottom Extended con 630 eventi",
+      "ground_truth_type": "top_value",
+      "ground_truth_numeric": {"top_value": "Uscita Pedane Bottom Extended", "top_count": 630},
+      "notes": "Domanda di ranking testuale → rank_by_count, NON group_by_count (che produce solo il chart summary)."
+    },
+    {
+      "id": "T010",
+      "tool": "rank_by_count",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Dammi la classifica completa di tutte le telecamere per numero di eventi.",
+      "expected_tool": "rank_by_count",
+      "expected_args": {"column": "camera_name"},
+      "ground_truth": [
+        {"value": "Uscita Pedane Bottom Extended", "count": 630},
+        {"value": "Deposito Pedane Bottom Extended", "count": 395},
+        {"value": "Gasolio CAT", "count": 295},
+        {"value": "Carico Calce", "count": 280},
+        {"value": "Griglia", "count": 212},
+        {"value": "Est. Magazzino SX", "count": 126},
+        {"value": "P.le Box Mulini", "count": 110},
+        {"value": "M. P. Dosatori", "count": 25},
+        {"value": "Cancello JMS", "count": 9},
+        {"value": "Materie Prime", "count": 8}
+      ],
+      "ground_truth_type": "ranked_list",
+      "notes": "La risposta deve riportare tutte e 10 le telecamere in ordine decrescente con i conteggi esatti."
+    },
+    {
+      "id": "T011",
+      "tool": "rank_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "A maggio quale telecamera è stata più attiva?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "camera_name",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": "Uscita Pedane Bottom Extended con 183 eventi",
+      "ground_truth_type": "top_value",
+      "ground_truth_numeric": {"top_value": "Uscita Pedane Bottom Extended", "top_count": 183},
+      "notes": "ranking + filtro date range. A maggio Carico Calce (111) supera Deposito Pedane (108): l'ordine cambia rispetto al totale."
+    },
+    {
+      "id": "T012",
+      "tool": "rank_by_count",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Qual è la telecamera meno attiva nel dataset?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {"column": "camera_name"},
+      "ground_truth": "Materie Prime con 8 eventi",
+      "ground_truth_type": "bottom_value",
+      "ground_truth_numeric": {"bottom_value": "Materie Prime", "bottom_count": 8},
+      "notes": "La domanda chiede il minimo — il modello deve leggere l'ultimo elemento della lista rank_by_count."
+    },
+    {
+      "id": "T013",
+      "tool": "rank_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Come si distribuisce la severità degli eventi? Quanti eventi ci sono per ogni livello di gravità?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {"column": "severity"},
+      "ground_truth": [
+        {"value": "8", "count": 1250},
+        {"value": "5", "count": 451},
+        {"value": "6", "count": 333},
+        {"value": "7", "count": 56}
+      ],
+      "ground_truth_type": "ranked_list",
+      "notes": "Distribuzione numerica testuale → rank_by_count(column=severity). NON group_by_count (chart). Nessun evento con severity 1-4 o 9-10."
+    },
+
+    {
+      "id": "T014",
+      "tool": "group_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Fammi un grafico che mostra quanti eventi ha registrato ogni telecamera.",
+      "expected_tool": "group_by_count",
+      "expected_args": {"column": "camera_name"},
+      "ground_truth": {"top_value": "Uscita Pedane Bottom Extended", "top_count": 630, "categories": 10},
+      "ground_truth_type": "chart_summary",
+      "notes": "La parola 'grafico' segnala group_by_count (chart automatico) invece di rank_by_count (lista testuale)."
+    },
+    {
+      "id": "T015",
+      "tool": "group_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mostrami visivamente come si distribuisce la gravità degli eventi nel dataset.",
+      "expected_tool": "group_by_count",
+      "expected_args": {"column": "severity"},
+      "ground_truth": {"top_value": "8", "top_count": 1250, "categories": 4},
+      "ground_truth_type": "chart_summary",
+      "notes": "'Visivamente' + 'distribuzione' → group_by_count con chart. Top severity è 8 con 1250 eventi."
+    },
+    {
+      "id": "T016",
+      "tool": "group_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Fammi un grafico della distribuzione degli eventi per area di lavoro limitata al mese di maggio.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "camera_name",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": {"top_value": "Uscita Pedane Bottom Extended", "top_count": 183, "categories": 9},
+      "ground_truth_type": "chart_summary",
+      "notes": "Chart + filtro date. A maggio Materie Prime non compare (0 eventi), quindi categories=9 non 10."
+    },
+    {
+      "id": "T017",
+      "tool": "group_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Voglio un grafico con la distribuzione degli eventi per severità solo per la telecamera Deposito Pedane.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "severity",
+        "camera_name": "Deposito Pedane Bottom Extended"
+      },
+      "ground_truth": {"categories": 3},
+      "ground_truth_type": "chart_summary",
+      "notes": "Chart + filtro camera + colonna severity. Deposito Pedane ha severity 5, 6 e 8 (3 livelli distinti)."
+    },
+
+    {
+      "id": "T018",
+      "tool": "rank_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Quale tipo di violazione DPI si verifica più spesso?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {},
+      "ground_truth": "No Hard Hat con 1250 eventi",
+      "ground_truth_type": "top_value",
+      "ground_truth_numeric": {"top_value": "No Hard Hat", "top_count": 1250},
+      "notes": "Chiede la violazione DPI più comune → rank_by_violation_type, NON rank_by_count(event_type). event_type è il nome commerciale dell'evento telecamera, non la violazione."
+    },
+    {
+      "id": "T019",
+      "tool": "rank_by_violation_type",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Dammi la classifica completa delle violazioni DPI per frequenza.",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {},
+      "ground_truth": [
+        {"value": "No Hard Hat", "count": 1250},
+        {"value": "No High Vis vest", "count": 672},
+        {"value": "No Face cover", "count": 106},
+        {"value": "person", "count": 56},
+        {"value": "car", "count": 5},
+        {"value": "truck", "count": 4}
+      ],
+      "ground_truth_type": "ranked_list",
+      "notes": "Classifica completa. Nota: 'person', 'car', 'truck' sono violation_type relativi al proximity detection, non violazioni DPI in senso stretto."
+    },
+    {
+      "id": "T020",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Nell'area Deposito Pedane, quale violazione DPI viene commessa più spesso?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {"camera_name": "Deposito Pedane Bottom Extended"},
+      "ground_truth": "No High Vis vest con 154 eventi",
+      "ground_truth_type": "top_value",
+      "ground_truth_numeric": {"top_value": "No High Vis vest", "top_count": 154},
+      "notes": "Filtro camera_name. Attenzione: Deposito Pedane ha No High Vis vest (154) > No Hard Hat (135) > No Face cover (106)."
+    },
+    {
+      "id": "T021",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "A maggio, qual è la classifica delle violazioni DPI per frequenza?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": {"top_value": "No Hard Hat", "top_count": 394},
+      "ground_truth_type": "top_value",
+      "notes": "Ranking violazioni + filtro date range su maggio. No Hard Hat in maggio = 394."
+    },
+    {
+      "id": "T022",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nell'area Carico Calce, come si distribuiscono le violazioni per tipo?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {"camera_name": "Carico Calce"},
+      "ground_truth": [
+        {"value": "No Hard Hat", "count": 238},
+        {"value": "person", "count": 41},
+        {"value": "truck", "count": 1}
+      ],
+      "ground_truth_type": "ranked_list",
+      "notes": "Carico Calce ha anche rilevazioni di tipo proximity (person, truck), non solo DPI."
+    },
+
+    {
+      "id": "T023",
+      "tool": "group_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Fammi un grafico che mostra la distribuzione delle violazioni DPI nel dataset completo.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {},
+      "ground_truth": {"top_value": "No Hard Hat", "top_count": 1250, "categories": 6},
+      "ground_truth_type": "chart_summary",
+      "notes": "'Grafico' + 'violazioni DPI' → group_by_violation_type (torta/treemap automatico), NON group_by_count."
+    },
+    {
+      "id": "T024",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Mostrami visivamente come si distribuiscono le violazioni nell'area Deposito Pedane.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {"camera_name": "Deposito Pedane Bottom Extended"},
+      "ground_truth": {"top_value": "No High Vis vest", "top_count": 154, "categories": 3},
+      "ground_truth_type": "chart_summary",
+      "notes": "Deposito Pedane ha 3 tipi di violazione distinti: No High Vis vest, No Hard Hat, No Face cover."
+    },
+    {
+      "id": "T025",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Voglio vedere un grafico delle violazioni registrate nell'area Uscita Pedane.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {"camera_name": "Uscita Pedane Bottom Extended"},
+      "ground_truth": {"top_value": "No High Vis vest", "top_count": 442, "categories": 2},
+      "ground_truth_type": "chart_summary",
+      "notes": "Uscita Pedane ha solo 2 tipi: No High Vis vest (442) e No Hard Hat (188)."
+    },
+    {
+      "id": "T026",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Fammi un grafico delle violazioni a maggio, solo per eventi critici (severità ≥ 7).",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59",
+        "min_severity": 7
+      },
+      "ground_truth": {"top_value": "No Hard Hat"},
+      "ground_truth_type": "chart_summary",
+      "notes": "Tre filtri combinati: chart + date range + min_severity. Test di composizione filtri complessa."
+    },
+
+    {
+      "id": "T027",
+      "tool": "average_severity",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Qual è la severità media di tutti gli eventi registrati?",
+      "expected_tool": "average_severity",
+      "expected_args": {},
+      "ground_truth": 7.01,
+      "ground_truth_type": "exact_float",
+      "notes": "Media globale. Valore = 7.01 (due decimali)."
+    },
+    {
+      "id": "T028",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanto è grave in media un evento rilevato da Gasolio CAT?",
+      "expected_tool": "average_severity",
+      "expected_args": {"camera_name": "Gasolio CAT"},
+      "ground_truth": 8.0,
+      "ground_truth_type": "exact_float",
+      "notes": "Gasolio CAT ha avg_sev=8.0 perché tutti i suoi 295 eventi hanno severity=8."
+    },
+    {
+      "id": "T029",
+      "tool": "average_severity",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "In media, quanto è grave una violazione di mancato uso del caschetto?",
+      "expected_tool": "average_severity",
+      "expected_args": {"violation_type": "No Hard Hat"},
+      "ground_truth": 8.0,
+      "ground_truth_type": "exact_float",
+      "notes": "Media per violation_type. No Hard Hat ha avg=8.0 perché corrisponde solo a eventi con severity=8."
+    },
+    {
+      "id": "T030",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Qual è la severità media delle violazioni di mancato uso del gilet ad alta visibilità?",
+      "expected_tool": "average_severity",
+      "expected_args": {"violation_type": "No High Vis vest"},
+      "ground_truth": 5.33,
+      "ground_truth_type": "exact_float",
+      "notes": "No High Vis vest ha avg=5.33 (severity 5 e 6, media più bassa rispetto al caschetto)."
+    },
+    {
+      "id": "T031",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Qual è la severità media degli eventi rilevati ad aprile nell'area Uscita Pedane?",
+      "expected_tool": "average_severity",
+      "expected_args": {
+        "camera_name": "Uscita Pedane Bottom Extended",
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": null,
+      "ground_truth_type": "float_approx",
+      "notes": "Filtro camera + date range. Ground truth da verificare al momento dell'esecuzione (valore calcolabile dal DB)."
+    },
+
+    {
+      "id": "T032",
+      "tool": "events_per_day",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami il trend giornaliero del numero di eventi nel dataset.",
+      "expected_tool": "events_per_day",
+      "expected_args": {},
+      "ground_truth": {
+        "total_events": 2090,
+        "days": 19,
+        "peak_date": "2026-04-16",
+        "peak_count": 165
+      },
+      "ground_truth_type": "summary_dict",
+      "notes": "events_per_day restituisce il trend + genera il grafico automaticamente. Il dataset copre 19 giorni distinti."
+    },
+    {
+      "id": "T033",
+      "tool": "events_per_day",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Qual è stato il giorno con più eventi in assoluto?",
+      "expected_tool": "events_per_day",
+      "expected_args": {},
+      "ground_truth": "2026-04-16 con 165 eventi",
+      "ground_truth_type": "peak_value",
+      "ground_truth_numeric": {"peak_date": "2026-04-16", "peak_count": 165},
+      "notes": "La risposta deve identificare il giorno di picco dal risultato di events_per_day. Il modello deve leggere peak_date e peak_count."
+    },
+    {
+      "id": "T034",
+      "tool": "events_per_day",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Mostrami l'andamento giornaliero degli eventi per la telecamera Gasolio CAT.",
+      "expected_tool": "events_per_day",
+      "expected_args": {"camera_name": "Gasolio CAT"},
+      "ground_truth": {"total_events": 295},
+      "ground_truth_type": "summary_dict",
+      "notes": "events_per_day con filtro camera_name. Il totale deve essere 295 (coerente con count_events)."
+    },
+    {
+      "id": "T035",
+      "tool": "events_per_day",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Come sono distribuiti gli eventi giornalieri a Griglia durante il mese di aprile?",
+      "expected_tool": "events_per_day",
+      "expected_args": {
+        "camera_name": "Griglia",
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": {"total_events": 144},
+      "ground_truth_type": "summary_dict",
+      "notes": "events_per_day + camera + date range. Griglia aprile = 144 eventi."
+    },
+
+    {
+      "id": "T036",
+      "tool": "average_events_per_period",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "In media, quanti eventi si verificano ogni giorno?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {"period": "day"},
+      "ground_truth": 110.0,
+      "ground_truth_type": "exact_float",
+      "notes": "Media giornaliera = 2090 / 19 giorni distinti = 110.0."
+    },
+    {
+      "id": "T037",
+      "tool": "average_events_per_period",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "In media quanti eventi al giorno vengono rilevati dall'area Gasolio CAT?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {"period": "day", "camera_name": "Gasolio CAT"},
+      "ground_truth": 15.53,
+      "ground_truth_type": "exact_float",
+      "notes": "Media giornaliera per camera specifica."
+    },
+    {
+      "id": "T038",
+      "tool": "average_events_per_period",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mediamente quanti eventi si registrano ogni ora in tutto l'impianto?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {"period": "hour"},
+      "ground_truth": 87.08,
+      "ground_truth_type": "exact_float",
+      "notes": "Il modello deve scegliere period='hour' e non confondere con events_by_hour (che dà distribuzione, non media)."
+    },
+
+    {
+      "id": "T039",
+      "tool": "events_by_hour",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "A che ora del giorno si registrano più eventi di sicurezza?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {},
+      "ground_truth": "07:00 con 170 eventi",
+      "ground_truth_type": "peak_value",
+      "ground_truth_numeric": {"peak_hour": 7, "peak_count": 170},
+      "notes": "Il picco orario è alle 07:00 con 170 eventi. events_by_hour restituisce anche il quiet_hour (23:00 con 14 eventi)."
+    },
+    {
+      "id": "T040",
+      "tool": "events_by_hour",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami come si distribuiscono gli eventi durante le ore del giorno.",
+      "expected_tool": "events_by_hour",
+      "expected_args": {},
+      "ground_truth": {"peak_hour": 7, "peak_count": 170, "quiet_hour": 23, "quiet_count": 14},
+      "ground_truth_type": "summary_dict",
+      "notes": "Distribuzione oraria globale. L'ora più tranquilla è la 23 (14 eventi)."
+    },
+    {
+      "id": "T041",
+      "tool": "events_by_hour",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "A che ora avvengono più violazioni nell'area Uscita Pedane?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {"camera_name": "Uscita Pedane Bottom Extended"},
+      "ground_truth": null,
+      "ground_truth_type": "peak_value",
+      "notes": "events_by_hour con filtro camera_name. Il ground truth esatto richiede esecuzione live."
+    },
+    {
+      "id": "T042",
+      "tool": "events_by_hour",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nelle ore notturne (tra mezzanotte e le 6) quanti eventi critici si sono verificati?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {"min_severity": 7},
+      "ground_truth": null,
+      "ground_truth_type": "derived",
+      "notes": "Richiede events_by_hour(min_severity=7) e poi la lettura delle fasce 00-05. Testa lettura critica del risultato."
+    },
+
+    {
+      "id": "T043",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Esiste un pattern giornaliero ricorrente negli eventi? Quale giorno della settimana e a che ora si concentrano di più?",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {},
+      "ground_truth": "Mercoledì alle 13:00 con 47 eventi",
+      "ground_truth_type": "peak_value",
+      "ground_truth_numeric": {"peak_weekday": "Mercoledì", "peak_hour": 13, "peak_count": 47},
+      "notes": "Il peak weekday+hour è Mercoledì 13h=47. Usare events_by_weekday_hour, non combinare altri tool."
+    },
+    {
+      "id": "T044",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mostrami una heatmap degli eventi distribuiti per giorno della settimana e ora del giorno.",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {},
+      "ground_truth": {"peak_weekday": "Mercoledì", "peak_hour": 13, "peak_count": 47},
+      "ground_truth_type": "chart_summary",
+      "notes": "'Heatmap' + 'giorno×ora' → events_by_weekday_hour. La parola heatmap e il pattern descritto sono il segnale."
+    },
+    {
+      "id": "T045",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nella zona Gasolio CAT, c'è un orario e un giorno della settimana in cui si concentrano più violazioni?",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {"camera_name": "Gasolio CAT"},
+      "ground_truth": null,
+      "ground_truth_type": "peak_value",
+      "notes": "events_by_weekday_hour + filtro camera. Ground truth richiede esecuzione live."
+    },
+
+    {
+      "id": "T046",
+      "tool": "get_event_by_id",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Dimmi tutto sull'evento con ID 4594.",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {"event_id": 4594},
+      "ground_truth": {
+        "event_id": 4594,
+        "camera_name": "Deposito Pedane Bottom Extended",
+        "event_datetime": "2026-05-06T19:57:20",
+        "severity": 8,
+        "reviewed": false,
+        "detections": [{"violation_type": "No Hard Hat", "confidence": 83.0}]
+      },
+      "ground_truth_type": "exact_record",
+      "notes": "Evento esistente. L'ultimo evento nel dataset. La risposta deve includere tutti i campi."
+    },
+    {
+      "id": "T047",
+      "tool": "get_event_by_id",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Esiste un evento con ID 9999999 nel database?",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {"event_id": 9999999},
+      "ground_truth": "non trovato / non esiste",
+      "ground_truth_type": "not_found",
+      "notes": "ID inesistente. Il tool solleva ValueError e il modello deve comunicarlo in modo naturale senza tecnicismi."
+    },
+    {
+      "id": "T048",
+      "tool": "get_event_by_id",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Mostrami i dettagli dell'evento 3000: dove è stato rilevato, quando, con quale livello di gravità e quale tipo di violazione.",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {"event_id": 3000},
+      "ground_truth": {
+        "event_id": 3000,
+        "camera_name": "Deposito Pedane Bottom Extended",
+        "event_datetime": "2026-04-12T09:19:15",
+        "severity": 6,
+        "detections": [{"violation_type": "No Face cover", "confidence": 74.0}]
+      },
+      "ground_truth_type": "exact_record",
+      "notes": "Evento di mancato uso della visiera (No Face cover) con confidence 74%. Severity 6 (media)."
+    },
+
+    {
+      "id": "T049",
+      "tool": "list_events",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami gli ultimi 5 eventi registrati nel sistema.",
+      "expected_tool": "list_events",
+      "expected_args": {"limit": 5, "descending_search_order": true},
+      "ground_truth": null,
+      "ground_truth_type": "list_ordered_desc",
+      "notes": "list_events, non get_event_by_id. L'ordine deve essere decrescente (default). Limit=5."
+    },
+    {
+      "id": "T050",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Elenca i primi 10 eventi critici in ordine cronologico (dal più vecchio al più recente).",
+      "expected_tool": "list_events",
+      "expected_args": {"limit": 10, "descending_search_order": false, "min_severity": 7},
+      "ground_truth": null,
+      "ground_truth_type": "list_ordered_asc",
+      "notes": "Il modello deve impostare descending_search_order=false (ordine crescente = dal più vecchio) E min_severity=7."
+    },
+    {
+      "id": "T051",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Elenca gli ultimi eventi rilevati dall'area Cancello JMS.",
+      "expected_tool": "list_events",
+      "expected_args": {"camera_name": "Cancello JMS"},
+      "ground_truth": null,
+      "ground_truth_type": "list_filtered",
+      "notes": "Cancello JMS ha solo 9 eventi totali; il risultato sarà ≤9 (il limit default è 10). Tutti i risultati devono avere camera_name='Cancello JMS'."
+    },
+    {
+      "id": "T052",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Mostrami gli ultimi 5 eventi in cui è stato rilevato mancato uso della visiera.",
+      "expected_tool": "list_events",
+      "expected_args": {"limit": 5, "violation_type": "No Face cover"},
+      "ground_truth": null,
+      "ground_truth_type": "list_filtered",
+      "notes": "Il filtro corretto è violation_type='No Face cover', non event_type. Testa la distinzione tra i due campi."
+    },
+    {
+      "id": "T053",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Mostrami i dettagli completi (incluse le detection) degli ultimi 3 eventi di Materie Prime.",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "camera_name": "Materie Prime",
+        "limit": 3,
+        "fields": ["*"]
+      },
+      "ground_truth": null,
+      "ground_truth_type": "list_filtered",
+      "notes": "Il modello deve aggiungere fields=['*'] per includere le detections (confidence e violation_type). Materie Prime ha solo 8 eventi totali."
+    },
+
+    {
+      "id": "T054",
+      "tool": "events_per_day_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Mostrami il trend giornaliero degli eventi separato per tipo di violazione DPI.",
+      "expected_tool": "events_per_day_by_violation_type",
+      "expected_args": {},
+      "ground_truth": {"top_type": "No Hard Hat", "violation_types": 6},
+      "ground_truth_type": "chart_summary",
+      "notes": "Richiede events_per_day_by_violation_type, non events_per_day (che aggrega tutto). Genera heatmap automatica."
+    },
+    {
+      "id": "T055",
+      "tool": "events_per_day_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Come si distribuiscono giorno per giorno le violazioni nell'area Deposito Pedane, separate per tipo?",
+      "expected_tool": "events_per_day_by_violation_type",
+      "expected_args": {"camera_name": "Deposito Pedane Bottom Extended"},
+      "ground_truth": {"violation_types": 3},
+      "ground_truth_type": "chart_summary",
+      "notes": "Deposito Pedane ha 3 violation_type distinti. La heatmap mostra l'evoluzione temporale per tipo."
+    },
+
+    {
+      "id": "T056",
+      "tool": "multi_tool",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Che percentuale degli eventi totali ha rilevato la telecamera Uscita Pedane?",
+      "expected_tool": "rank_by_count|count_events + percentage",
+      "expected_args": [
+        {},
+        {"value": 630, "total": 2090}
+      ],
+      "ground_truth": 30.14,
+      "ground_truth_type": "exact_float",
+      "notes": "Due percorsi validi: rank_by_count(camera_name) oppure count_events (totale + per camera), poi percentage(630, 2090) = 30.14%."
+    },
+    {
+      "id": "T057",
+      "tool": "multi_tool",
+      "t_eval": "V",
+      "difficulty": "hard",
+      "question": "Quante violazioni di caschetto in più ci sono rispetto alle violazioni di gilet?",
+      "expected_tool": "rank_by_violation_type|count_events + subtract",
+      "expected_args": [
+        {},
+        {"a": 1250, "b": 672}
+      ],
+      "ground_truth": 578,
+      "ground_truth_type": "exact_integer",
+      "notes": "Due percorsi validi: rank_by_violation_type() oppure count_events per tipo (No Hard Hat=1250, No High Vis vest=672), poi subtract(1250, 672) = 578."
+    },
+    {
+      "id": "T058",
+      "tool": "multi_tool",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Quale percentuale degli eventi di aprile si è verificata nella seconda metà del mese (dal 16 in poi)?",
+      "expected_tool": "count_events + percentage",
+      "expected_args": [
+        {"date_start": "2026-04-01T00:00:00", "date_end": "2026-04-30T23:59:59"},
+        {"date_start": "2026-04-16T00:00:00", "date_end": "2026-04-30T23:59:59"},
+        {"value": 507, "total": 1462}
+      ],
+      "ground_truth": 34.68,
+      "ground_truth_type": "exact_float",
+      "notes": "Aprile totale=1462, apr 16-30=507. percentage(507, 1462) = 34.68%. Richiede 3 tool call in sequenza."
+    },
+
+    {
+      "id": "OOS001",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Puoi dirmi le previsioni meteo di domani?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Domanda completamente off-topic. Il modello deve rifiutare spiegando che si occupa solo di eventi di sicurezza."
+    },
+    {
+      "id": "OOS002",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Qual è la distanza in chilometri tra Milano e Roma?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Domanda di geografia generale. Off-topic."
+    },
+    {
+      "id": "OOS003",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Scrivi un'email al responsabile della sicurezza con un riepilogo settimanale.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Azione su sistema esterno (email). Il modello risponde solo a query su dati, non genera documenti."
+    },
+    {
+      "id": "OOS004",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Dammi la normativa D.Lgs. 81/2008 sull'obbligo di uso dei DPI in cantiere.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Richiesta legale/normativa. Potrebbe sembrare pertinente al dominio sicurezza, ma è fuori dall'ambito del DB."
+    },
+    {
+      "id": "OOS005",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Come si indossa correttamente un caschetto di sicurezza?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Domanda tecnica sul DPI. Pertinente al dominio sicurezza ma non ai dati del DB. Testa il confine dello scope."
+    },
+    {
+      "id": "OOS006",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Chi è il responsabile della sicurezza in azienda?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Informazione organizzativa non presente nel DB. Il modello deve ammettere di non avere questa informazione."
+    },
+    {
+      "id": "OOS007",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Crea un rapporto PDF per l'INAIL con tutti gli incidenti del mese di aprile.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Azione complessa fuori scope (generazione PDF, invio a ente). La domanda usa 'aprile' che esiste nel DB: il modello non deve iniziare a estrarre dati e poi capire che non può fare il PDF."
+    },
+    {
+      "id": "OOS008",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Confronta le performance di sicurezza di questo impianto con la media del settore manifatturiero italiano.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Richiede dati esterni non presenti nel DB. Testa la capacità di riconoscere dati mancanti vs rifiuto."
+    },
+    {
+      "id": "OOS009",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Traduci la frase 'nessun uso del caschetto' in inglese.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Richiesta di traduzione linguistica. Off-topic puro."
+    },
+    {
+      "id": "OOS010",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Quali telecamere del sistema hanno bisogno di manutenzione?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "ground_truth_type": "refusal",
+      "notes": "Domanda sul sistema fisico di telecamere, non sugli eventi. Il DB contiene eventi rilevati, non stato hardware. Confine sottile."
+    }
+  ]
+}

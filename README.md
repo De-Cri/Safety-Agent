@@ -1,75 +1,77 @@
 # Safety Agent
 
-Agente LLM sperimentale per l'analisi di eventi di sicurezza sul lavoro rilevati da un sistema di computer vision (telecamere CCTV). L'utente chiede in linguaggio naturale, l'agente interroga il database tramite strumenti MCP e risponde alle richieste.
+Experimental LLM agent for analyzing workplace safety events detected by a computer vision system (CCTV cameras). The user asks in natural language, the agent queries the database through MCP tools and answers the request.
 
-## Obiettivo
+## Goal
 
-I sistemi di computer vision producono migliaia di eventi (violazioni DPI, severità, rilevazioni per frame) che nessun essere umano ha voglia di scorrere a mano. L'obiettivo è dare una panoramica di tutto ciò che mette in pericolo dipendenti e strutture, in tempo reale, semplicemente chiedendolo: conteggi, filtri per camera/tipo/severità/data, trend temporali e generazioni di grafici per visualizzare in modo ottimale la distribuzione degli eventi.
+Computer vision systems produce thousands of events (PPE violations, severity, per-frame detections) that no human wants to scroll through by hand. The goal is to give an overview of everything that puts employees and facilities at risk, in real time, just by asking: counts, filters by camera/type/severity/date, time trends, and chart generation to visualize the distribution of events at a glance.
 
-Il punto chiave: il modello **non riceve mai il dump del database**. Riceve solo strumenti per interrogarlo. Questo garantisce risposte fondate sui dati, costi di token sotto controllo e privacy (il modello vede solo ciò che serve alla domanda).
+The key point: the model **never receives a dump of the database**. It only receives tools to query it. This guarantees data-grounded answers, token costs under control, and privacy (the model only sees what the question needs).
 
-## Architettura
+## Architecture
 
 ```
-UI (chat web)  →  FastAPI  →  Agente (Gemini 2.5 Flash)  →  MCP server  →  PostgreSQL
+UI (web chat)  →  FastAPI  →  Agent (Gemini 2.5 Flash)  →  MCP server  →  PostgreSQL
 ```
 
-Quattro pezzi, ognuno con un compito solo:
+Four pieces, each with a single job:
 
-- **MCP server** ([src/mcp-server.py](src/mcp-server.py)) — espone il database come strumenti via Model Context Protocol (FastMCP). Strumenti primitivi (`get_event_by_id`, `list_events`), aggregazioni (`count_events`, `group_by_count`, `average_severity`, `events_per_day`, `events_by_hour`) e una risorsa `db://schema` che descrive al modello lo schema *live* del DB: camere e tipi di evento reali, non inventati.
-- **Agente** ([agent/core.py](agent/core.py)) — collega Gemini al server MCP via stdio. All'avvio legge `db://schema` e lo inietta nel system prompt, così il modello sa cosa può chiedere prima ancora di chiamare un tool.
-- **API** ([api/app.py](api/app.py)) — FastAPI con endpoint `/chat`, `/stats` e `/chat/reset`. Il server MCP vive nel lifespan dell'app: un processo solo, condiviso tra le richieste.
-- **Database** ([db/models.py](db/models.py)) — PostgreSQL via SQLAlchemy. Due tabelle: `safety_events` (camera, tipo, severità 1-10, reviewed) e `event_detections` (una riga per persona/veicolo nel frame, con confidence). I dati arrivano dal CSV in `data/` tramite [data-cleaning/import_to_db.py](data-cleaning/import_to_db.py).
+- **MCP server** ([mcp/servers/safety-server/server.py](mcp/servers/safety-server/server.py)) — exposes the database as tools via the Model Context Protocol (FastMCP). Primitive tools (`get_event_by_id`, `list_events`), aggregations (`count_events`, `group_by_count`, `average_severity`, `events_per_day`, `events_by_hour`) and a `db://schema` resource that describes the *live* DB schema to the model: real cameras and event types, not made-up ones.
+- **Agent** ([src/core.py](src/core.py)) — connects Gemini to the MCP server over stdio. At startup it reads `db://schema` and injects it into the system prompt, so the model knows what it can ask before it even calls a tool. The prompt rules live in [prompts/system.py](prompts/system.py).
+- **API** ([api/app.py](api/app.py), [api/routes/chat.py](api/routes/chat.py)) — FastAPI with `/chat`, `/stats`, and `/chat/reset` endpoints. The MCP server lives in the app lifespan: a single process, shared across requests. Charts are rendered by [mcp/plot-creator/generate_histograms.py](mcp/plot-creator/generate_histograms.py).
+- **Database** ([db/models.py](db/models.py)) — PostgreSQL via SQLAlchemy. Two tables: `safety_events` (camera, type, severity 1-10, reviewed) and `event_detections` (one row per person/vehicle in the frame, with confidence). Data comes from the CSV in `data/` through [data-cleaning/import_to_db.py](data-cleaning/import_to_db.py).
 
-### Controllo dei token
+### Token control
 
-I tool restituiscono di default solo i campi essenziali (modalità *lean*) e mai più di 20 righe — se servono i dettagli, il modello li chiede esplicitamente. La cronologia chat viene potata agli ultimi 2 turni utente. Sembrano dettagli, ma sono la differenza tra un agente economico e uno che brucia il budget per dire "ciao".
+By default the tools return only the essential fields (*lean* mode) and never more than 20 rows — if details are needed, the model asks for them explicitly. The chat history is pruned to the last 2 user turns. These look like small details, but they are the difference between a cheap agent and one that burns the budget just to say "hi".
 
-## Risultati
+## Results
 
-### Analisi esplorativa dei dati
+### Exploratory data analysis
 
-I grafici qui sotto sono **esempi generati da dati sintetici** ([data-cleaning/generate_demo_plots.py](data-cleaning/generate_demo_plots.py)): nomi delle telecamere e numeri sono inventati, servono solo a mostrare il tipo di analisi prodotta. Le stesse visualizzazioni girano sul dataset reale (privato, non incluso nel repo) tramite [data-cleaning/visualize.py](data-cleaning/visualize.py):
+The charts below are **examples generated from synthetic data** ([data-cleaning/generate_demo_plots.py](data-cleaning/generate_demo_plots.py)): camera names and numbers are made up, they only serve to show the kind of analysis produced. The same visualizations run on the real dataset (private, not included in the repo) through [data-cleaning/visualize.py](data-cleaning/visualize.py):
 
 | | |
 |---|---|
-| ![Violazioni per camera](data-cleaning/plots/plot_1_violations_by_camera.png) | ![Eventi per ora](data-cleaning/plots/plot_2_events_by_hour.png) |
-| ![Trend giornaliero](data-cleaning/plots/plot_3_daily_trend.png) | ![Heatmap severità](data-cleaning/plots/plot_4_severity_heatmap.png) |
+| ![Violations by camera](data-cleaning/plots/plot_1_violations_by_camera.png) | ![Events by hour](data-cleaning/plots/plot_2_events_by_hour.png) |
+| ![Daily trend](data-cleaning/plots/plot_3_daily_trend.png) | ![Severity heatmap](data-cleaning/plots/plot_4_severity_heatmap.png) |
 
-![Rilevazioni multiple](data-cleaning/plots/plot_5_multi_detections.png)
+![Multiple detections](data-cleaning/plots/plot_5_multi_detections.png)
 
-### Benchmark sui token
+### Agent evaluation (T-Eval)
 
-Confronto tra payload FULL (tutti i campi) e LEAN (solo i campi richiesti dalla query) su query reali ([tests/run_benchmark.py](tests/run_benchmark.py)). Il filtro lato server riduce sensibilmente i token in input a parità di qualità della risposta:
+The agent is evaluated against a test set anchored to a real DB snapshot ([tests/evaluations/run_t_eval.py](tests/evaluations/run_t_eval.py)), scoring three dimensions per question:
 
-![Benchmark token budget](tests/benchmark_token_MinMax/benchmark_token_budget.png)
+- **R — Retrieve:** was the correct tool selected?
+- **U — Understand:** are the passed parameters correct?
+- **V — Review:** is the final answer correct? (programmatic checks first, then an LLM-as-judge fallback)
 
-Il report completo (HTML) viene generato in locale da [tests/benchmark_token_MinMax/generate_report.py](tests/benchmark_token_MinMax/generate_report.py) e non è incluso nel repo perché contiene estratti del dataset.
+Chart coverage — that every supported chart type is produced by a natural question — is checked separately by [tests/evaluations/test_chart_coverage.py](tests/evaluations/test_chart_coverage.py). Both runners are resume-safe: they save after each question and pick up where they stopped.
 
-## Avvio rapido
+## Quick start
 
 ```bash
-# 1. Variabili d'ambiente (GEMINI_API_KEY, PASSWORD_SAFETY_AGENT_DB)
+# 1. Environment variables (GEMINI_API_KEY_CREDIT, PASSWORD_SAFETY_AGENT_DB, API_KEY)
 cp .env.local.example .env.local
 
-# 2. Importa i dati nel DB
+# 2. Import the data into the DB
 python data-cleaning/import_to_db.py
 
-# 3. Configura la UI (config.js è gitignorato, contiene la API key)
+# 3. Configure the UI (config.js is gitignored, it holds the API key)
 cp ui/config.example.js ui/config.js
 
-# 4. Avvia l'API (lancia anche il server MCP e serve la UI)
+# 4. Start the API (also launches the MCP server and serves the UI)
 uvicorn api.app:app
 
-# 5. Apri http://127.0.0.1:8000
+# 5. Open http://127.0.0.1:8000
 ```
 
-In alternativa, `python cli.py` per chattare da terminale senza UI.
+Alternatively, `python cli.py` to chat from the terminal without the UI.
 
-## Test
+## Tests
 
 ```bash
-pytest tests/test_queries.py       # query sul DB
-pytest tests/test_mcp_live.py      # tool MCP end-to-end
-pytest tests/test_token_budget.py  # budget di token
+python tests/evaluations/run_t_eval.py            # R/U/V evaluation against the live agent
+python tests/evaluations/rescore.py               # re-score from saved transcripts (no agent calls)
+python tests/evaluations/test_chart_coverage.py   # chart type coverage
 ```

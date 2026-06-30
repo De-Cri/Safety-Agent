@@ -1,6 +1,6 @@
 import sys
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 from mcp.server.fastmcp import FastMCP
 from datetime import datetime
 from db.queries import EventFilters
@@ -74,25 +74,25 @@ def db_schema() -> str:
     evt_types       = ", ".join(s["event_types"])       or "N/A"
     violation_types = ", ".join(s["violation_types"])   or "N/A"
     return (
-        f"## Schema del database (live)\n"
-        f"Totale eventi: {s['total']}\n"
-        f"Intervallo date: {s['date_min']} → {s['date_max']}\n\n"
-        f"Campi di ogni evento:\n"
-        f"- event_id: ID numerico univoco\n"
-        f"- event_datetime: data e ora della rilevazione (ISO 8601)\n"
-        f"- camera_name: nome dell'area/telecamera. Valori presenti nel DB: {cameras}\n"
-        f"- event_type: nome commerciale dell'evento (specifico per telecamera, non descrittivo della violazione). Valori: {evt_types}\n"
-        f"- severity: gravità da 1 a 10 (1-3 bassa, 4-6 media, 7-10 critica)\n"
-        f"- reviewed: se l'evento è stato revisionato manualmente (booleano)\n"
-        f"- detections: lista di rilevazioni CV, ognuna con violation_type e confidence (0-100%)\n\n"
-        f"## Tipi di violazione reali (violation_type nelle detections)\n"
-        f"Valori presenti nel DB: {violation_types}\n"
-        f"IMPORTANTE: per filtrare o raggruppare per tipo di violazione DPI usa SEMPRE violation_type, "
-        f"non event_type. event_type è il nome generico dell'evento della telecamera e non identifica "
-        f"la violazione specifica.\n\n"
-        f"Filtri comuni: i tool accettano — camera_name, violation_type, severity, reviewed (match esatto), "
-        f"date_start/date_end (ISO 8601), min_severity/max_severity (intervallo).\n"
-        f"event_type è disponibile ma usalo solo se vuoi filtrare per nome evento specifico della telecamera.\n"
+        f"## Database schema (live)\n"
+        f"Total events: {s['total']}\n"
+        f"Date range: {s['date_min']} → {s['date_max']}\n\n"
+        f"Fields of each event:\n"
+        f"- event_id: unique numeric ID\n"
+        f"- event_datetime: date and time of the detection (ISO 8601)\n"
+        f"- camera_name: name of the area/camera. Values present in the DB: {cameras}\n"
+        f"- event_type: commercial name of the event (camera-specific, not descriptive of the violation). Values: {evt_types}\n"
+        f"- severity: severity from 1 to 10 (1-3 low, 4-6 medium, 7-10 critical)\n"
+        f"- reviewed: whether the event has been manually reviewed (boolean)\n"
+        f"- detections: list of CV detections, each with violation_type and confidence (0-100%)\n\n"
+        f"## Real violation types (violation_type in the detections)\n"
+        f"Values present in the DB: {violation_types}\n"
+        f"IMPORTANT: to filter or group by PPE violation type ALWAYS use violation_type, "
+        f"not event_type. event_type is the generic camera event name and does not identify "
+        f"the specific violation.\n\n"
+        f"Common filters: the tools accept — camera_name, violation_type, severity, reviewed (exact match), "
+        f"date_start/date_end (ISO 8601), min_severity/max_severity (range).\n"
+        f"event_type is available but use it only if you want to filter by a camera-specific event name.\n"
     )
 
 
@@ -128,7 +128,7 @@ def list_events(
 ) -> list[dict]:
     """List raw safety events, newest first by default (descending_search_order=false for oldest first).
     limit: default 10, hard max 20. Standard optional filters apply.
-    violation_type: filtra per tipo di violazione reale (es. "No Hard Hat", "No High Vis vest").
+    violation_type: filters by the real violation type (e.g. "No Hard Hat", "No High Vis vest").
     fields: columns to return. Default (None) = lean set [event_id, event_datetime,
     camera_name, event_type, severity]. Pass ["*"] to include reviewed and detections."""
 
@@ -193,9 +193,10 @@ def rank_by_count(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> list[dict]:
-    """Full ranked list of events grouped by a column: [{"value": ..., "count": ...}], sorted by count desc.
-    Standard filters apply. Use for ranking questions: busiest camera, severity distribution —
-    when you need to read and report all values. For violation ranking use rank_by_violation_type."""
+    """DEFAULT for TEXT questions about ranking/distribution by camera, event_type, or severity:
+    full ranking, 'how many per value/level', 'which most or least'. Returns the
+    COMPLETE ordered list (all entries). Does NOT generate charts.
+    Use group_by_count ONLY if the user explicitly asks for a chart."""
 
     return _group_by_count(
         column=column,
@@ -220,9 +221,10 @@ def group_by_count(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> dict:
-    """Count events grouped by camera_name or severity + automatic chart. Standard filters apply.
-    Use for camera distribution or severity distribution charts.
-    Per raggruppare per tipo di violazione usa group_by_violation_type invece."""
+    """Use ONLY when the user explicitly asks for a CHART or visual view ('chart',
+    'show me visually', 'pie') of the distribution by camera or severity: generates the chart.
+    Returns only a summary (top and bottom), NOT the full list: for textual rankings or breakdowns
+    use rank_by_count. For PPE violations use group_by_violation_type. Standard filters apply."""
 
     data = _group_by_count(column=column, filters=_filters(
         camera_name=camera_name, event_type=event_type, violation_type=violation_type,
@@ -283,7 +285,7 @@ def events_per_day(
 ) -> dict:
     """Summary of events per calendar day + automatic chart. Standard filters apply.
     Use for trend questions: violations per day this week, busiest days, etc.
-    violation_type filtra per tipo di violazione reale (es. "No Hard Hat")."""
+    violation_type filters by the real violation type (e.g. "No Hard Hat")."""
 
     data = _events_per_day(filters=_filters(
         camera_name=camera_name, event_type=event_type, violation_type=violation_type,
@@ -358,7 +360,7 @@ def events_by_hour(
             "quiet_hour": quiet["hour"], "quiet_count": quiet["count"]}
 
 
-_DOW_IT = {0: "Domenica", 1: "Lunedì", 2: "Martedì", 3: "Mercoledì", 4: "Giovedì", 5: "Venerdì", 6: "Sabato"}
+_DOW_EN = {0: "Sunday", 1: "Monday", 2: "Tuesday", 3: "Wednesday", 4: "Thursday", 5: "Friday", 6: "Saturday"}
 
 @mcp.tool()
 def events_by_weekday_hour(
@@ -386,17 +388,17 @@ def events_by_weekday_hour(
     peak = max(data, key=lambda r: r["count"])
     return {
         "total_events": total,
-        "peak_weekday": _DOW_IT.get(peak["weekday"], str(peak["weekday"])),
+        "peak_weekday": _DOW_EN.get(peak["weekday"], str(peak["weekday"])),
         "peak_hour": peak["hour"],
         "peak_count": peak["count"],
     }
 
 
-_VIOLATION_IT = {
-    "No Hard Hat":     "mancato uso del caschetto",
-    "No High Vis vest": "mancato uso del gilet",
-    "No Face cover":   "mancato uso della visiera",
-    "person":          "persona rilevata (distanza veicolo)",
+_VIOLATION_EN = {
+    "No Hard Hat":     "no hard hat",
+    "No High Vis vest": "no hi-vis vest",
+    "No Face cover":   "no face cover",
+    "person":          "person detected (vehicle distance)",
 }
 
 @mcp.tool()
@@ -410,9 +412,10 @@ def rank_by_violation_type(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> list[dict]:
-    """Full ranked list of events grouped by violation_type (tipo di violazione DPI reale).
-    Restituisce [{"value": "No Hard Hat", "count": N}, ...] ordinato per count desc.
-    Usa questo invece di rank_by_count per domande su violazioni DPI specifiche."""
+    """DEFAULT for TEXT questions about PPE violations: full ranking, 'how do they break down
+    by type', 'how many per type', 'which violation most or least frequent'. Returns the COMPLETE list
+    ordered by violation_type. Does NOT generate charts.
+    Use group_by_violation_type ONLY if the user explicitly asks for a chart."""
 
     return _group_by_violation_type(filters=_filters(
         camera_name=camera_name, violation_type=violation_type,
@@ -432,9 +435,10 @@ def group_by_violation_type(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> dict:
-    """Conta eventi per tipo di violazione DPI reale + grafico automatico (torta o treemap).
-    Usa questo per rispondere a 'quale violazione è più comune?' o per mostrare la distribuzione
-    delle violazioni. NON usare group_by_count(column='event_type') per questo scopo."""
+    """Use ONLY when the user explicitly asks for a CHART or visual view ('chart',
+    'show me visually', 'pie') of the PPE violation distribution: generates the chart.
+    Returns only a summary (top and bottom), NOT the full list: for textual rankings or breakdowns
+    by type use rank_by_violation_type. Standard filters apply."""
 
     data = _group_by_violation_type(filters=_filters(
         camera_name=camera_name, violation_type=violation_type,
@@ -463,9 +467,9 @@ def events_per_day_by_violation_type(
     min_severity: int | None = None,
     max_severity: int | None = None,
 ) -> dict:
-    """Conta eventi per (giorno × tipo di violazione DPI reale) + heatmap automatica.
-    Usa quando l'utente chiede i dati per giorno divisi per tipo di violazione.
-    Più preciso di events_per_day_by_type perché usa violation_type dalle detections."""
+    """Counts events per (day × real PPE violation type) + automatic heatmap.
+    Use when the user asks for per-day data broken down by violation type.
+    More precise than events_per_day_by_type because it uses violation_type from the detections."""
 
     data = _events_per_day_by_violation_type(filters=_filters(
         camera_name=camera_name, violation_type=violation_type,
@@ -481,7 +485,7 @@ def events_per_day_by_violation_type(
         "total_events": total,
         "violation_types": types,
         "peak_date": peak["date"],
-        "peak_type": _VIOLATION_IT.get(peak["violation_type"], peak["violation_type"]),
+        "peak_type": _VIOLATION_EN.get(peak["violation_type"], peak["violation_type"]),
         "peak_count": peak["count"],
     }
 

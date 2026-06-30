@@ -14,7 +14,7 @@ EVENT_FIELDS = {"event_id", "event_datetime", "camera_name", "event_type", "seve
 class EventFilters:
     camera_name: str | None = None
     event_type: str | None = None
-    violation_type: str | None = None  # filtra per detection.violation_type (es. "No Hard Hat")
+    violation_type: str | None = None  # filters by detection.violation_type (e.g. "No Hard Hat")
     severity: int | None = None
     reviewed: bool | None = None
     date_start: datetime | None = None
@@ -297,7 +297,7 @@ def events_per_day(
 def group_by_violation_type(
     filters: EventFilters | None = None,
 ) -> list[dict]:
-    """Conta eventi distinti raggruppati per violation_type da EventDetection."""
+    """Counts distinct events grouped by violation_type from EventDetection."""
     with SessionLocal() as session:
         cnt = func.count(func.distinct(EventDetection.event_id))
         q = (
@@ -312,7 +312,7 @@ def group_by_violation_type(
 def events_per_day_by_violation_type(
     filters: EventFilters | None = None,
 ) -> list[dict]:
-    """Conta eventi distinti raggruppati per (data, violation_type)."""
+    """Counts distinct events grouped by (date, violation_type)."""
     with SessionLocal() as session:
         date_col = cast(SafetyEvent.event_datetime, Date)
         cnt = func.count(func.distinct(SafetyEvent.event_id))

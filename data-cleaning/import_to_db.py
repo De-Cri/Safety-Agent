@@ -54,9 +54,9 @@ def event_stream():
 
 def main():
     create_tables()
-    print("Tabelle create / verificate.")
+    print("Tables created / verified.")
     total = insert_events(event_stream())
-    print(f"Importazione completata: {total} eventi.")
+    print(f"Import complete: {total} events.")
 
 
 if __name__ == "__main__":

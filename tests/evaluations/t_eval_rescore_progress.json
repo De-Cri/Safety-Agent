@@ -1,0 +1,740 @@
+{
+  "T002": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 295 trovato nella risposta"
+    }
+  },
+  "T003": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 1306 trovato nella risposta"
+    }
+  },
+  "T004": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "2/2 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 1462 trovato nella risposta"
+    }
+  },
+  "T006": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 1250 trovato nella risposta"
+    }
+  },
+  "T007": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 68 trovato nella risposta"
+    }
+  },
+  "T008": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: count_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 784 trovato nella risposta"
+    }
+  },
+  "T011": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: rank_by_count"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "label e conteggio corretti nella risposta"
+    }
+  },
+  "T021": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: rank_by_violation_type"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "2/2 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta è perfettamente corretta e include dati aggiuntivi rilevanti che completano la classifica richiesta.",
+      "method": "llm_judge"
+    }
+  },
+  "T027": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_severity"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta dell'agente è perfettamente allineata con il ground truth e risponde in modo completo alla domanda.",
+      "method": "llm_judge"
+    }
+  },
+  "T028": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_severity"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta è perfettamente corretta e completa, corrispondendo al ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "T029": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_severity"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 8.0 trovato nella risposta"
+    }
+  },
+  "T030": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_severity"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta è perfettamente corretta e completa, fornendo il dato numerico esatto richiesto.",
+      "method": "llm_judge"
+    }
+  },
+  "T031": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_severity"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 0.8,
+      "score_raw": 4,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente ha fornito una risposta diretta e completa, con un valore numerico plausibile per la severità media. Impossibile verificare la correttezza fattuale senza ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "T032": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "valori chiave del summary trovati nella risposta"
+    }
+  },
+  "T033": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta dell'agente è perfettamente corretta e completa, corrispondendo al ground truth in ogni dettaglio.",
+      "method": "llm_judge"
+    }
+  },
+  "T034": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "valori chiave del summary trovati nella risposta"
+    }
+  },
+  "T035": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "valori chiave del summary trovati nella risposta"
+    }
+  },
+  "T036": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_events_per_period"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 110.0 trovato nella risposta"
+    }
+  },
+  "T037": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_events_per_period"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "2/2 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta dell'agente è perfettamente allineata al ground truth, sia nel dato numerico che nel contesto.",
+      "method": "llm_judge"
+    }
+  },
+  "T038": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: average_events_per_period"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente ha fornito la risposta numerica esatta e completa, corrispondente al ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "T039": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta dell'agente è perfettamente allineata con il ground truth e risponde completamente alla domanda. Include anche informazioni extra non richieste.",
+      "method": "llm_judge"
+    }
+  },
+  "T040": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "valori chiave del summary trovati nella risposta"
+    }
+  },
+  "T041": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente risponde direttamente e specificamente alla domanda, fornendo l'ora esatta e il numero di eventi. Fornisce anche un utile dato aggiuntivo.",
+      "method": "llm_judge"
+    }
+  },
+  "T043": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_weekday_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "label e conteggio corretti nella risposta"
+    }
+  },
+  "T044": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_weekday_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "text+numeric",
+      "detail": "valori chiave del summary trovati nella risposta"
+    }
+  },
+  "T045": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_by_weekday_hour"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 4,
+      "completezza": 5,
+      "note": "L'agente risponde direttamente alla domanda fornendo giorno e orario specifici, oltre a dettagli aggiuntivi pertinenti. Non potendo verificare i dati, la correttezza è valutata sulla capacità di fornire una risposta strutturata e numerica.",
+      "method": "llm_judge"
+    }
+  },
+  "T046": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: get_event_by_id"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 0.8,
+      "score_raw": 4,
+      "correttezza": 4,
+      "completezza": 4,
+      "note": "La risposta è corretta e quasi completa. Manca solo una parte del nome della telecamera (Bottom Extended).",
+      "method": "llm_judge"
+    }
+  },
+  "T047": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: get_event_by_id"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "risposta indica evento inesistente"
+    }
+  },
+  "T048": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: get_event_by_id"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta dell'agente è completamente corretta e completa, rispondendo a tutti gli aspetti della domanda con i dettagli del ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "T050": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: list_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente ha fornito esattamente 10 eventi in ordine cronologico come richiesto, dimostrando precisione e completezza.",
+      "method": "llm_judge"
+    }
+  },
+  "T051": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: list_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "La risposta elenca gli eventi richiesti in modo chiaro e dettagliato, fornendo tutte le informazioni pertinenti.",
+      "method": "llm_judge"
+    }
+  },
+  "T053": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: list_events"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "3/3 argomenti corretti"
+    },
+    "V": {
+      "score": 0.8,
+      "score_raw": 4,
+      "correttezza": 4,
+      "completezza": 5,
+      "note": "L'agente ha fornito tutti i dettagli richiesti per i 3 eventi, incluse le detection, e ha aggiunto un'informazione utile.",
+      "method": "llm_judge"
+    }
+  },
+  "T054": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day_by_violation_type"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 0.4,
+      "score_raw": 2,
+      "correttezza": 3,
+      "completezza": 2,
+      "note": "L'agente identifica correttamente il tipo di violazione al picco, ma la risposta non presenta un trend giornaliero completo né elenca tutti i tipi di violazione, omette il numero di tipi di violazione dal ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "T055": {
+    "R": {
+      "score": 1.0,
+      "detail": "corretto: events_per_day_by_violation_type"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "1/1 argomenti corretti"
+    },
+    "V": {
+      "score": 0.4,
+      "score_raw": 2,
+      "correttezza": 5,
+      "completezza": 2,
+      "note": "L'agente identifica correttamente il numero di tipi di violazione. Tuttavia, non fornisce la distribuzione giorno per giorno e per tipo richiesta, ma solo un esempio di picco.",
+      "method": "llm_judge"
+    }
+  },
+  "T056": {
+    "R": {
+      "score": 1.0,
+      "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'percentage']"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 30.14 trovato nella risposta"
+    }
+  },
+  "T057": {
+    "R": {
+      "score": 1.0,
+      "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'subtract']"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 578 trovato nella risposta"
+    }
+  },
+  "T058": {
+    "R": {
+      "score": 1.0,
+      "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'percentage']"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "2/2 argomenti corretti"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "numeric",
+      "detail": "valore 34.68 trovato nella risposta"
+    }
+  },
+  "OOS001": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "keyword di rifiuto trovata: 'non posso'"
+    }
+  },
+  "OOS002": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente ha fornito un rifiuto educato e pertinente, spiegando i suoi limiti in linea con il ground truth.",
+      "method": "llm_judge"
+    }
+  },
+  "OOS004": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "keyword di rifiuto trovata: 'non posso'"
+    }
+  },
+  "OOS005": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "keyword di rifiuto trovata: 'non posso'"
+    }
+  },
+  "OOS006": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "keyword di rifiuto trovata: 'non ho accesso'"
+    }
+  },
+  "OOS008": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "method": "keyword",
+      "detail": "keyword di rifiuto trovata: 'non ho accesso'"
+    }
+  },
+  "OOS009": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 0.2,
+      "score_raw": 1,
+      "correttezza": 1,
+      "completezza": 1,
+      "note": "La risposta dell'agente ('no hard hat usage') è una traduzione letterale e corretta della frase data. Tuttavia, non corrisponde al ground truth fornito ('rifiuto educato'), che è una frase completamente diversa e non una traduzione dell'input.",
+      "method": "llm_judge"
+    }
+  },
+  "OOS010": {
+    "R": {
+      "score": 1.0,
+      "detail": "nessun tool chiamato (corretto)"
+    },
+    "U": {
+      "score": 1.0,
+      "detail": "nessun arg atteso (refusal)"
+    },
+    "V": {
+      "score": 1.0,
+      "score_raw": 5,
+      "correttezza": 5,
+      "completezza": 5,
+      "note": "L'agente ha fornito un rifiuto educato come richiesto dal ground truth e ha offerto ulteriore assistenza pertinente.",
+      "method": "llm_judge"
+    }
+  }
+}

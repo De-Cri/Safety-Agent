@@ -55,10 +55,10 @@ def load_data(path: str) -> list[dict]:
 def main():
     rows = load_data(CSV_PATH)
     print(f"{'='*60}")
-    print(f"ANALISI: {CSV_PATH}")
+    print(f"ANALYSIS: {CSV_PATH}")
     print(f"{'='*60}")
-    print(f"Totale righe: {len(rows)}")
-    print(f"Colonne: {list(rows[0].keys())}\n")
+    print(f"Total rows: {len(rows)}")
+    print(f"Columns: {list(rows[0].keys())}\n")
     
     # GENERAL EVENTS INFO
 
@@ -71,16 +71,16 @@ def main():
 
     print(f"[Event ID]")
     print(f"  Range: {min(event_ids)} -> {max(event_ids)}")
-    print(f"  Attesi (consecutivi): {max(event_ids) - min(event_ids) + 1}")
-    print(f"  Presenti nel file:    {len(event_ids_set)}")
+    print(f"  Expected (consecutive): {max(event_ids) - min(event_ids) + 1}")
+    print(f"  Present in file:        {len(event_ids_set)}")
     expected = set(range(min(event_ids), max(event_ids) + 1))
     gaps = sorted(expected - set(event_ids))
-    print(f"  ID mancanti (gap):    {len(gaps)}")
+    print(f"  Missing IDs (gaps):     {len(gaps)}")
     if gaps[:20]:
-        print(f"  Primi 20 gap: {gaps[:20]}")
-    print(f"  Duplicati:            {len(duplicates)}")
+        print(f"  First 20 gaps: {gaps[:20]}")
+    print(f"  Duplicates:             {len(duplicates)}")
     if duplicates:
-        print(f"  ID duplicati: {duplicates}")
+        print(f"  Duplicate IDs: {duplicates}")
     print()
 
     # DATE AND TIME INFO
@@ -96,11 +96,11 @@ def main():
 
     print(f"[Date and Time]")
     if parsed_dates:
-        print(f"  Formato: DD/MM/YYYY, HH:MM:SS  ✓")
-        print(f"  Periodo: {min(parsed_dates).strftime('%d/%m/%Y')} -> {max(parsed_dates).strftime('%d/%m/%Y')}")
-        print(f"  Giorni distinti: {len(set(d.date() for d in parsed_dates))}")
+        print(f"  Format: DD/MM/YYYY, HH:MM:SS  ✓")
+        print(f"  Period: {min(parsed_dates).strftime('%d/%m/%Y')} -> {max(parsed_dates).strftime('%d/%m/%Y')}")
+        print(f"  Distinct days: {len(set(d.date() for d in parsed_dates))}")
     if date_errors:
-        print(f"  ERRORI parsing ({len(date_errors)}):")
+        print(f"  PARSING ERRORS ({len(date_errors)}):")
         for eid, val, err in date_errors[:5]:
             print(f"    ID {eid}: '{val}' → {err}")
     print()
@@ -112,9 +112,9 @@ def main():
 
     print(f"[Severity]")
     for sev, cnt in sorted(sev_counts.items()):
-        print(f"  {sev}: {cnt} eventi ({cnt/len(rows)*100:.1f}%)")
+        print(f"  {sev}: {cnt} events ({cnt/len(rows)*100:.1f}%)")
     if invalid_sev:
-        print(f"  VALORI NON NUMERICI: {set(invalid_sev)}")
+        print(f"  NON-NUMERIC VALUES: {set(invalid_sev)}")
     print()
 
     # REVIEWED ANALYSIS
@@ -128,16 +128,16 @@ def main():
     print()
 
     # Camera - Location analysis
-    
+
     # Creating a dictionary, the intent is that dict gives O(1) lookup by camera name later
     cam_counts = count_field(rows, lambda r: parse_name(r["Name"])[0])
     et_counts  = count_field(rows, lambda r: parse_name(r["Name"])[1])
-    print(f"[Location / Camera Name] — {len(cam_counts)} camere distinte")
+    print(f"[Location / Camera Name] — {len(cam_counts)} distinct cameras")
     for cam, cnt in cam_counts.items():
         print(f"  {cam}: {cnt}")
     print()
 
-    print(f"[Event Type] — {len(et_counts)} tipi distinti")
+    print(f"[Event Type] — {len(et_counts)} distinct types")
     for et, cnt in et_counts.items():
         print(f"  {et}: {cnt}")
     print()
@@ -162,24 +162,24 @@ def main():
     for vtype in all_violations:
         viol_counts[vtype] = viol_counts.get(vtype, 0) + 1
     print(f"[Trigger / Violations]")
-    print(f"  Totale detection (incluse multi): {sum(viol_counts.values())}")
-    print(f"  Eventi con detection multipla:    {multi_detection_count}")
+    print(f"  Total detections (incl. multi):  {sum(viol_counts.values())}")
+    print(f"  Events with multiple detections: {multi_detection_count}")
     for vtype, cnt in sorted(viol_counts.items(), key=lambda x: x[1], reverse=True):
         print(f"  '{vtype}': {cnt}")
     if trigger_parse_errors:
-        print(f"  ERRORI parsing trigger ({len(trigger_parse_errors)}):")
+        print(f"  TRIGGER PARSING ERRORS ({len(trigger_parse_errors)}):")
         for eid, raw in trigger_parse_errors[:5]:
             print(f"    ID {eid}: '{raw}'")
     print()
 
     sorted_ids = sorted(event_ids, reverse=True)
     is_sorted = event_ids == sorted_ids
-    print(f"[Ordinamento]")
-    print(f"  ID in ordine decrescente: {'Sì' if is_sorted else 'No (riordinamento locale presente)'}")
+    print(f"[Ordering]")
+    print(f"  IDs in descending order: {'Yes' if is_sorted else 'No (local reordering present)'}")
     print()
 
     # Null / empty checks
-    print(f"[Campi vuoti / null]")
+    print(f"[Empty / null fields]")
     field_empty: dict[str, int] = {}
     for r in rows:
         for k, v in r.items():
@@ -187,9 +187,9 @@ def main():
                 field_empty[k] = field_empty.get(k, 0) + 1
     if field_empty:
         for k, cnt in field_empty.items():
-            print(f"  '{k}': {cnt} vuoti")
+            print(f"  '{k}': {cnt} empty")
     else:
-        print(f"  Nessun campo vuoto  ")
+        print(f"  No empty fields  ")
     print()
 
 

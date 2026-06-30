@@ -14,19 +14,19 @@ from mcp.types import TextResourceContents
 from pydantic import AnyUrl
 from google import genai
 from google.genai import types
-from agent import prompts
+from prompts import system as prompts
 
 load_dotenv(ROOT / ".env.local")
 
-SERVER_SCRIPT = str(ROOT / "src" / "mcp-server.py")
+SERVER_SCRIPT = str(ROOT / "mcp" / "servers" / "safety-server" / "server.py")
 # Fields that FIELDS_RULES is aware of. If the DB adds new fields, the startup check warns.
 # Keep this set in sync with FIELDS_RULES below whenever the schema changes.
 KNOWN_FIELDS = {"event_id", "event_datetime", "camera_name", "event_type", "severity", "reviewed", "detections"}
 
 def _build_system_instruction(schema_text: str) -> str:
     return "\n".join([
-        "Sei un assistente specializzato nell'analisi di eventi di sicurezza sul lavoro rilevati da telecamere CCTV.",
-        "Regola di base: Per ogni richiesta, rispondi in modo naturale e discorsivo come se fossi un essere umano.\n",
+        "You are an assistant specialized in analyzing workplace safety events detected by CCTV cameras.",
+        "Basic rule: for every request, answer in a natural, conversational way, as if you were a human.\n",
         schema_text,
         prompts.FIELDS_RULES,
         prompts.GENERAL_RULES,
@@ -99,8 +99,8 @@ def _extract_usage(response) -> dict:
         "output_tokens":   getattr(u, "candidates_token_count", 0) or 0,
         "total_tokens":    getattr(u, "total_token_count",       0) or 0,
         "thinking_tokens": getattr(u, "thoughts_token_count",    0) or 0,
-        # Prefisso riconosciuto dal caching implicito di Gemini: già contato
-        # in prompt_tokens, ma fatturato a -75%. Se resta a 0, niente cache.
+        # Prefix recognized by Gemini's implicit caching: already counted
+        # in prompt_tokens, but billed at -75%. If it stays 0, no cache hit.
         "cached_tokens":   getattr(u, "cached_content_token_count", 0) or 0,
     }
 

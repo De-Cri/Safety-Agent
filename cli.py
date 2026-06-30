@@ -3,7 +3,7 @@ from pathlib import Path
 import sys
 sys.path.insert(0, str(Path(__file__).parent))
 
-from agent.core import Agent
+from src.core import Agent
 
 
 async def main():
@@ -11,7 +11,7 @@ async def main():
     async with agent.start() as chat_session:
         print("Safety Agent ready. Type 'exit' to quit.\n")
         while True:
-            user_input = input("Tu: ").strip()
+            user_input = input("You: ").strip()
             if user_input.lower() == "exit":
                 break
             response = await chat_session.send_message(user_input)

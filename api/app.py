@@ -6,7 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from api.routes.chat import router as chat_router
-from agent.core import Agent
+from src.core import Agent
 
 agent = Agent()
 
@@ -26,6 +26,6 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(chat_router)
 
-# Stessa origine per UI e API: niente CORS, niente Live Server.
-# Il mount va per ultimo, altrimenti ruba le route all'API.
+# Same origin for UI and API: no CORS, no Live Server.
+# The mount goes last, otherwise it steals the API routes.
 app.mount("/", StaticFiles(directory=Path(__file__).parent.parent / "ui", html=True), name="ui")

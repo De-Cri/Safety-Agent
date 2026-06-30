@@ -2,11 +2,12 @@ import sys
 import asyncio
 from datetime import datetime
 from pathlib import Path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent / "plot-creator"))
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "mcp" / "plot-creator"))
 from generate_histograms import render_chart, ChartData
 from fastapi import APIRouter, Depends, Request
 from pydantic import BaseModel
 from api.auth import require_api_key
+from prompts.system import VIOLATION_LABELS
 from db.queries import (
     EventFilters,
     events_per_day as _db_events_per_day,
@@ -65,22 +66,15 @@ _CHARTABLE = {
     "group_by_violation_type", "events_per_day_by_violation_type",
 }
 
-_TYPE_IT = {
-    "Event No Hard Hat": "Senza caschetto",
-    "Event No High Vis Vest": "Senza gilet",
-    "Event Vehicle-Operator Distance": "Dist. veicolo-op.",
-    "Event Vehicle-Vehicle Distance": "Dist. veicolo-veicolo",
-    "Operators Event": "Rischio operatori",
-    "Operators Event-2": "Rischio operatori (var. 2)",
-    "Operators without Hard Hat (0,7)": "Op. senza caschetto",
-    "Operators without High Vis Vest": "Op. senza gilet",
-}
-
-_VIOLATION_IT = {
-    "No Hard Hat":      "Senza caschetto",
-    "No High Vis vest": "Senza gilet",
-    "No Face cover":    "Senza visiera",
-    "person":           "Persona rilevata",
+_TYPE_EN = {
+    "Event No Hard Hat": "No hard hat",
+    "Event No High Vis Vest": "No hi-vis vest",
+    "Event Vehicle-Operator Distance": "Vehicle-op. dist.",
+    "Event Vehicle-Vehicle Distance": "Vehicle-vehicle dist.",
+    "Operators Event": "Operator risk",
+    "Operators Event-2": "Operator risk (var. 2)",
+    "Operators without Hard Hat (0,7)": "Op. no hard hat",
+    "Operators without High Vis Vest": "Op. no hi-vis vest",
 }
 
 
@@ -107,24 +101,24 @@ def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
         raw_dates = [r["date"] for r in data]
         values = [r["count"] for r in data]
         if len(raw_dates) > 60:
-            # calendar heatmap parses YYYY-MM-DD internamente
-            return ChartData(labels=raw_dates, values=values, title="Eventi per giorno", chart_type="calendar_heatmap")
+            # calendar heatmap parses YYYY-MM-DD internally
+            return ChartData(labels=raw_dates, values=values, title="Events per day", chart_type="calendar_heatmap")
         else:
-            # line chart mostra le label all'utente → DD/MM/YYYY
+            # line chart shows the labels to the user → DD/MM/YYYY
             labels = [f"{d[8:10]}/{d[5:7]}/{d[0:4]}" for d in raw_dates]
-            return ChartData(labels=labels, values=values, title="Eventi per giorno", chart_type="line")
+            return ChartData(labels=labels, values=values, title="Events per day", chart_type="line")
 
     if tool == "group_by_count":
         labels = [str(r["value"]) for r in data]
         values = [r["count"] for r in data]
         chart_type = "pie" if len(labels) <= 6 else "treemap"
-        return ChartData(labels=labels, values=values, title="Distribuzione eventi", chart_type=chart_type)
+        return ChartData(labels=labels, values=values, title="Event distribution", chart_type=chart_type)
 
     if tool == "events_by_hour":
         return ChartData(
             labels=[f"{r['hour']:02d}:00" for r in data],
             values=[r["count"] for r in data],
-            title="Eventi per ora del giorno",
+            title="Events by hour of day",
             chart_type="bar",
         )
 
@@ -136,7 +130,7 @@ def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
         return ChartData(
             labels=[],
             values=[],
-            title="Distribuzione eventi per giorno e ora",
+            title="Event distribution by day and hour",
             chart_type="heatmap_grid",
             extra={"matrix": matrix},
         )
@@ -149,21 +143,21 @@ def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
         matrix = [[0] * len(dates) for _ in range(len(types))]
         for r in data:
             matrix[type_idx[r["event_type"]]][date_idx[r["date"]]] = r["count"]
-        row_labels = [_TYPE_IT.get(t, t) for t in types]
+        row_labels = [_TYPE_EN.get(t, t) for t in types]
         col_labels = [f"{d[8:10]}/{d[5:7]}" for d in dates]
         return ChartData(
             labels=[],
             values=[],
-            title="Eventi per giorno per tipo",
+            title="Events per day by type",
             chart_type="heatmap_grid",
-            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Giorno"},
+            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Day"},
         )
 
     if tool == "group_by_violation_type":
-        labels = [_VIOLATION_IT.get(r["value"], r["value"]) for r in data]
+        labels = [VIOLATION_LABELS.get(r["value"], r["value"]) for r in data]
         values = [r["count"] for r in data]
         chart_type = "pie" if len(labels) <= 6 else "treemap"
-        return ChartData(labels=labels, values=values, title="Distribuzione per tipo di violazione", chart_type=chart_type)
+        return ChartData(labels=labels, values=values, title="Distribution by violation type", chart_type=chart_type)
 
     if tool == "events_per_day_by_violation_type":
         dates = sorted({r["date"] for r in data})
@@ -173,14 +167,14 @@ def _build_chart_data(tool: str, data: list[dict]) -> ChartData | None:
         matrix = [[0] * len(dates) for _ in range(len(vtypes))]
         for r in data:
             matrix[vtype_idx[r["violation_type"]]][date_idx[r["date"]]] = r["count"]
-        row_labels = [_VIOLATION_IT.get(t, t) for t in vtypes]
+        row_labels = [VIOLATION_LABELS.get(t, t) for t in vtypes]
         col_labels = [f"{d[8:10]}/{d[5:7]}" for d in dates]
         return ChartData(
             labels=[],
             values=[],
-            title="Violazioni per giorno per tipo",
+            title="Violations per day by type",
             chart_type="heatmap_grid",
-            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Giorno"},
+            extra={"matrix": matrix, "rows": row_labels, "cols": col_labels, "xlabel": "Day"},
         )
 
     return None

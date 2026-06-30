@@ -55,7 +55,7 @@ def _render_treemap(data: ChartData) -> str:
 
     fig, ax = plt.subplots(figsize=(10, 6))
     norm = [v / max(data.values) for v in data.values]
-    colors = plt.cm.RdYlGn_r(norm)
+    colors = matplotlib.colormaps["RdYlGn_r"](norm)
     squarify.plot(
         sizes=data.values,
         label=[f"{l}\n{v}" for l, v in zip(data.labels, data.values)],
@@ -72,7 +72,7 @@ def _render_treemap(data: ChartData) -> str:
 
 
 def _render_calendar_heatmap(data: ChartData) -> str:
-    """GitHub-style calendar: settimane sull'asse X, giorni sull'Y, colore = intensità."""
+    """GitHub-style calendar: weeks on the X axis, days on the Y axis, color = intensity."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -84,10 +84,10 @@ def _render_calendar_heatmap(data: ChartData) -> str:
 
     if not dates:
         fig, ax = plt.subplots()
-        ax.text(0.5, 0.5, "Nessun dato", ha="center", va="center")
+        ax.text(0.5, 0.5, "No data", ha="center", va="center")
         return _fig_to_b64(fig)
 
-    start = min(dates) - timedelta(days=min(dates).weekday())  # allinea al lunedì
+    start = min(dates) - timedelta(days=min(dates).weekday())  # align to Monday
     end = max(dates) + timedelta(days=6 - max(dates).weekday())
     weeks = int((end - start).days / 7) + 1
 
@@ -103,20 +103,20 @@ def _render_calendar_heatmap(data: ChartData) -> str:
     im = ax.imshow(grid, aspect="auto", cmap="YlOrRd", vmin=0, vmax=vmax, interpolation="nearest")
 
     ax.set_yticks(range(7))
-    ax.set_yticklabels(["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"], fontsize=8)
+    ax.set_yticklabels(["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"], fontsize=8)
 
     month_ticks, month_labels, prev_month = [], [], None
     for w in range(weeks):
         d_w = start + timedelta(weeks=w)
         if d_w.month != prev_month:
             month_ticks.append(w)
-            _MESI = ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"]
-            month_labels.append(f"{_MESI[d_w.month - 1]} {d_w.year}")
+            _MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"]
+            month_labels.append(f"{_MONTHS[d_w.month - 1]} {d_w.year}")
             prev_month = d_w.month
     ax.set_xticks(month_ticks)
     ax.set_xticklabels(month_labels, ha="left", fontsize=8)
 
-    plt.colorbar(im, ax=ax, label="eventi")
+    plt.colorbar(im, ax=ax, label="events")
     if data.title:
         ax.set_title(data.title)
     fig.tight_layout()
@@ -124,8 +124,8 @@ def _render_calendar_heatmap(data: ChartData) -> str:
 
 
 def _render_heatmap_grid(data: ChartData) -> str:
-    """Matrice generica: righe e colonne definite in extra['rows']/extra['cols'],
-    default 7 giorni × 24 ore per events_by_weekday_hour."""
+    """Generic matrix: rows and columns defined in extra['rows']/extra['cols'],
+    default 7 days × 24 hours for events_by_weekday_hour."""
     import matplotlib
     matplotlib.use('Agg')
     import matplotlib.pyplot as plt
@@ -134,12 +134,12 @@ def _render_heatmap_grid(data: ChartData) -> str:
     matrix = data.extra.get("matrix")
     if matrix is None:
         fig, ax = plt.subplots()
-        ax.text(0.5, 0.5, "Nessun dato", ha="center", va="center")
+        ax.text(0.5, 0.5, "No data", ha="center", va="center")
         return _fig_to_b64(fig)
 
-    rows  = data.extra.get("rows",   ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"])
+    rows  = data.extra.get("rows",   ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"])
     cols  = data.extra.get("cols",   [f"{h:02d}" for h in range(24)])
-    xlabel = data.extra.get("xlabel", "Ora del giorno")
+    xlabel = data.extra.get("xlabel", "Hour of day")
 
     grid = np.array(matrix)
     n_rows, n_cols = grid.shape
@@ -162,7 +162,7 @@ def _render_heatmap_grid(data: ChartData) -> str:
     ax.set_xticks(range(n_cols))
     ax.set_xticklabels(cols, fontsize=7, rotation=45, ha="right")
     ax.set_xlabel(xlabel)
-    plt.colorbar(im, ax=ax, label="eventi")
+    plt.colorbar(im, ax=ax, label="events")
     if data.title:
         ax.set_title(data.title)
     fig.tight_layout()

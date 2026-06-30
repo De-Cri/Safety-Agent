@@ -1,0 +1,3357 @@
+{
+  "started": "2026-06-18T17:00:26.223373",
+  "results": [
+    {
+      "id": "T002",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanti eventi ha rilevato la telecamera Gasolio CAT?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "camera_name": "Gasolio CAT"
+      },
+      "ground_truth": 295,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "camera_name": "Gasolio CAT"
+          }
+        }
+      ],
+      "response_text": "La telecamera Gasolio CAT ha rilevato un totale di 295 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 295 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5340,
+        "output_tokens": 18,
+        "total_tokens": 5358,
+        "thinking_tokens": 0,
+        "cached_tokens": 4688
+      }
+    },
+    {
+      "id": "T003",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi critici sono stati registrati? Considero critici quelli con severità 7 o superiore.",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "min_severity": 7
+      },
+      "ground_truth": 1306,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "min_severity": 7
+          }
+        }
+      ],
+      "response_text": "Sono stati registrati 1306 eventi con severità pari o superiore a 7.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 1306 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5350,
+        "output_tokens": 20,
+        "total_tokens": 5370,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T004",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi sono stati registrati nel mese di aprile?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": 1462,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "date_end": "2026-04-30T23:59:59",
+            "date_start": "2026-04-01T00:00:00"
+          }
+        }
+      ],
+      "response_text": "Nel mese di aprile sono stati registrati 1462 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "2/2 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 1462 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5382,
+        "output_tokens": 15,
+        "total_tokens": 5397,
+        "thinking_tokens": 0,
+        "cached_tokens": 4628
+      }
+    },
+    {
+      "id": "T006",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanti eventi hanno severità esattamente pari a 8?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "severity": 8
+      },
+      "ground_truth": 1250,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "severity": 8
+          }
+        }
+      ],
+      "response_text": "Ci sono 1250 eventi con severità esattamente pari a 8.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 1250 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5337,
+        "output_tokens": 17,
+        "total_tokens": 5354,
+        "thinking_tokens": 0,
+        "cached_tokens": 4697
+      }
+    },
+    {
+      "id": "T007",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Quanti eventi ha registrato la telecamera Griglia nel mese di maggio?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "camera_name": "Griglia",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": 68,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "date_start": "2026-05-01T00:00:00",
+            "date_end": "2026-05-31T23:59:59",
+            "camera_name": "Griglia"
+          }
+        }
+      ],
+      "response_text": "La telecamera Griglia ha registrato 68 eventi nel mese di maggio.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 68 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5390,
+        "output_tokens": 17,
+        "total_tokens": 5407,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T008",
+      "tool": "count_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Quanti eventi sono di media o bassa gravità, cioè con severità 6 o inferiore?",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "max_severity": 6
+      },
+      "ground_truth": 784,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "max_severity": 6
+          }
+        }
+      ],
+      "response_text": "Ci sono 784 eventi con gravità media o bassa, ovvero con severità pari o inferiore a 6.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 784 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5345,
+        "output_tokens": 25,
+        "total_tokens": 5370,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T011",
+      "tool": "rank_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "A maggio quale telecamera è stata più attiva?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "camera_name",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": "Uscita Pedane Bottom Extended con 183 eventi",
+      "actual_tools": [
+        {
+          "tool": "rank_by_count",
+          "args": {
+            "column": "camera_name",
+            "date_end": "2026-05-31T23:59:59",
+            "date_start": "2026-05-01T00:00:00"
+          }
+        }
+      ],
+      "response_text": "A maggio, la telecamera più attiva è stata Uscita Pedane con 183 eventi. Subito dopo troviamo Carico Calce con 111 eventi e Deposito Pedane con 108 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "label e conteggio corretti nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5836,
+        "output_tokens": 48,
+        "total_tokens": 5884,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T021",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "A maggio, qual è la classifica delle violazioni DPI per frequenza?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": {
+        "top_value": "No Hard Hat",
+        "top_count": 394
+      },
+      "actual_tools": [
+        {
+          "tool": "rank_by_violation_type",
+          "args": {
+            "date_start": "2026-05-01T00:00:00",
+            "date_end": "2026-05-31T23:59:59"
+          }
+        }
+      ],
+      "response_text": "A maggio, la violazione più frequente è stata il mancato uso del caschetto con 394 eventi. Seguono 191 eventi di mancato uso del gilet ad alta visibilità e 29 eventi di mancato uso della mascherina. Infine ci sono stati 14 eventi legati alla presenza di persone.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "2/2 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è perfettamente corretta e include dati aggiuntivi rilevanti che completano la classifica richiesta.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5570,
+        "output_tokens": 72,
+        "total_tokens": 5642,
+        "thinking_tokens": 0,
+        "cached_tokens": 4669
+      }
+    },
+    {
+      "id": "T027",
+      "tool": "average_severity",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Qual è la severità media di tutti gli eventi registrati?",
+      "expected_tool": "average_severity",
+      "expected_args": {},
+      "ground_truth": 7.01,
+      "actual_tools": [
+        {
+          "tool": "average_severity",
+          "args": {}
+        }
+      ],
+      "response_text": "La severità media di tutti gli eventi registrati è di 7.01.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_severity"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta dell'agente è perfettamente allineata con il ground truth e risponde in modo completo alla domanda.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5333,
+        "output_tokens": 18,
+        "total_tokens": 5351,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T028",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "easy",
+      "question": "Quanto è grave in media un evento rilevato da Gasolio CAT?",
+      "expected_tool": "average_severity",
+      "expected_args": {
+        "camera_name": "Gasolio CAT"
+      },
+      "ground_truth": 8.0,
+      "actual_tools": [
+        {
+          "tool": "average_severity",
+          "args": {
+            "camera_name": "Gasolio CAT"
+          }
+        }
+      ],
+      "response_text": "La gravità media degli eventi rilevati dalla telecamera Gasolio CAT è di 8.0.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_severity"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è perfettamente corretta e completa, corrispondendo al ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5339,
+        "output_tokens": 21,
+        "total_tokens": 5360,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T029",
+      "tool": "average_severity",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "In media, quanto è grave una violazione di mancato uso del caschetto?",
+      "expected_tool": "average_severity",
+      "expected_args": {
+        "violation_type": "No Hard Hat"
+      },
+      "ground_truth": 8.0,
+      "actual_tools": [
+        {
+          "tool": "average_severity",
+          "args": {
+            "violation_type": "No Hard Hat"
+          }
+        }
+      ],
+      "response_text": "In media, la gravità di una violazione di mancato uso del caschetto è di 8,0.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_severity"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 8.0 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5343,
+        "output_tokens": 24,
+        "total_tokens": 5367,
+        "thinking_tokens": 0,
+        "cached_tokens": 4677
+      }
+    },
+    {
+      "id": "T030",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Qual è la severità media delle violazioni di mancato uso del gilet ad alta visibilità?",
+      "expected_tool": "average_severity",
+      "expected_args": {
+        "violation_type": "No High Vis vest"
+      },
+      "ground_truth": 5.33,
+      "actual_tools": [
+        {
+          "tool": "average_severity",
+          "args": {
+            "violation_type": "No High Vis vest"
+          }
+        }
+      ],
+      "response_text": "La severità media per le violazioni di mancato uso del gilet ad alta visibilità è di 5.33.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_severity"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è perfettamente corretta e completa, fornendo il dato numerico esatto richiesto.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5352,
+        "output_tokens": 27,
+        "total_tokens": 5379,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T031",
+      "tool": "average_severity",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Qual è la severità media degli eventi rilevati ad aprile nell'area Uscita Pedane?",
+      "expected_tool": "average_severity",
+      "expected_args": {
+        "camera_name": "Uscita Pedane Bottom Extended",
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "average_severity",
+          "args": {
+            "camera_name": "Uscita Pedane Bottom Extended",
+            "date_start": "2026-04-01T00:00:00",
+            "date_end": "2026-04-30T23:59:59"
+          }
+        }
+      ],
+      "response_text": "La severità media degli eventi rilevati ad aprile nell'area Uscita Pedane è di 6.24.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_severity"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito una risposta diretta e completa, con un valore numerico plausibile per la severità media. Impossibile verificare la correttezza fattuale senza ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5404,
+        "output_tokens": 26,
+        "total_tokens": 5430,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T032",
+      "tool": "events_per_day",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami il trend giornaliero del numero di eventi nel dataset.",
+      "expected_tool": "events_per_day",
+      "expected_args": {},
+      "ground_truth": {
+        "total_events": 2090,
+        "days": 19,
+        "peak_date": "2026-04-16",
+        "peak_count": 165
+      },
+      "actual_tools": [
+        {
+          "tool": "events_per_day",
+          "args": {}
+        }
+      ],
+      "response_text": "Il numero totale di eventi nel dataset è di 2090, distribuiti su 19 giorni. Il picco di eventi si è verificato il 16 aprile 2026, con 165 rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5376,
+        "output_tokens": 51,
+        "total_tokens": 5427,
+        "thinking_tokens": 0,
+        "cached_tokens": 4678
+      }
+    },
+    {
+      "id": "T033",
+      "tool": "events_per_day",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Qual è stato il giorno con più eventi in assoluto?",
+      "expected_tool": "events_per_day",
+      "expected_args": {},
+      "ground_truth": "2026-04-16 con 165 eventi",
+      "actual_tools": [
+        {
+          "tool": "events_per_day",
+          "args": {}
+        }
+      ],
+      "response_text": "Il giorno con il maggior numero di eventi in assoluto è stato il 16 aprile 2026, con 165 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta dell'agente è perfettamente corretta e completa, corrispondendo al ground truth in ogni dettaglio.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5375,
+        "output_tokens": 31,
+        "total_tokens": 5406,
+        "thinking_tokens": 0,
+        "cached_tokens": 4685
+      }
+    },
+    {
+      "id": "T034",
+      "tool": "events_per_day",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Mostrami l'andamento giornaliero degli eventi per la telecamera Gasolio CAT.",
+      "expected_tool": "events_per_day",
+      "expected_args": {
+        "camera_name": "Gasolio CAT"
+      },
+      "ground_truth": {
+        "total_events": 295
+      },
+      "actual_tools": [
+        {
+          "tool": "events_per_day",
+          "args": {
+            "camera_name": "Gasolio CAT"
+          }
+        }
+      ],
+      "response_text": "Per la telecamera Gasolio CAT, ci sono stati 295 eventi distribuiti su 19 giorni. Il giorno con il maggior numero di eventi è stato il 16 aprile 2026, con 20 rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5388,
+        "output_tokens": 52,
+        "total_tokens": 5440,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T035",
+      "tool": "events_per_day",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Come sono distribuiti gli eventi giornalieri a Griglia durante il mese di aprile?",
+      "expected_tool": "events_per_day",
+      "expected_args": {
+        "camera_name": "Griglia",
+        "date_start": "2026-04-01T00:00:00",
+        "date_end": "2026-04-30T23:59:59"
+      },
+      "ground_truth": {
+        "total_events": 144
+      },
+      "actual_tools": [
+        {
+          "tool": "events_per_day",
+          "args": {
+            "camera_name": "Griglia",
+            "date_start": "2026-04-01T00:00:00",
+            "date_end": "2026-04-30T23:59:59"
+          }
+        }
+      ],
+      "response_text": "Durante il mese di aprile, a Griglia ci sono stati 144 eventi totali, distribuiti su 10 giorni. La giornata con il maggior numero di eventi è stata il 14 aprile, con 20 rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5436,
+        "output_tokens": 51,
+        "total_tokens": 5487,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T036",
+      "tool": "average_events_per_period",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "In media, quanti eventi si verificano ogni giorno?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {
+        "period": "day"
+      },
+      "ground_truth": 110.0,
+      "actual_tools": [
+        {
+          "tool": "average_events_per_period",
+          "args": {
+            "period": "day"
+          }
+        }
+      ],
+      "response_text": "In media, si verificano 110 eventi ogni giorno.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_events_per_period"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 110.0 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5345,
+        "output_tokens": 14,
+        "total_tokens": 5359,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T037",
+      "tool": "average_events_per_period",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "In media quanti eventi al giorno vengono rilevati dall'area Gasolio CAT?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {
+        "period": "day",
+        "camera_name": "Gasolio CAT"
+      },
+      "ground_truth": 15.53,
+      "actual_tools": [
+        {
+          "tool": "average_events_per_period",
+          "args": {
+            "camera_name": "Gasolio CAT",
+            "period": "day"
+          }
+        }
+      ],
+      "response_text": "Nell'area Gasolio CAT vengono rilevati in media 15.53 eventi al giorno.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_events_per_period"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "2/2 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta dell'agente è perfettamente allineata al ground truth, sia nel dato numerico che nel contesto.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5361,
+        "output_tokens": 21,
+        "total_tokens": 5382,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T038",
+      "tool": "average_events_per_period",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mediamente quanti eventi si registrano ogni ora in tutto l'impianto?",
+      "expected_tool": "average_events_per_period",
+      "expected_args": {
+        "period": "hour"
+      },
+      "ground_truth": 87.08,
+      "actual_tools": [
+        {
+          "tool": "average_events_per_period",
+          "args": {
+            "period": "hour"
+          }
+        }
+      ],
+      "response_text": "In media, si registrano circa 87.08 eventi ogni ora in tutto l'impianto.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: average_events_per_period"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito la risposta numerica esatta e completa, corrispondente al ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5352,
+        "output_tokens": 23,
+        "total_tokens": 5375,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T039",
+      "tool": "events_by_hour",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "A che ora del giorno si registrano più eventi di sicurezza?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {},
+      "ground_truth": "07:00 con 170 eventi",
+      "actual_tools": [
+        {
+          "tool": "events_by_hour",
+          "args": {}
+        }
+      ],
+      "response_text": "Si registra un picco di eventi alle 7 del mattino con 170 rilevazioni, mentre l'ora più tranquilla è alle 23 con solo 14 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta dell'agente è perfettamente allineata con il ground truth e risponde completamente alla domanda. Include anche informazioni extra non richieste.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5379,
+        "output_tokens": 40,
+        "total_tokens": 5419,
+        "thinking_tokens": 0,
+        "cached_tokens": 4683
+      }
+    },
+    {
+      "id": "T040",
+      "tool": "events_by_hour",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami come si distribuiscono gli eventi durante le ore del giorno.",
+      "expected_tool": "events_by_hour",
+      "expected_args": {},
+      "ground_truth": {
+        "peak_hour": 7,
+        "peak_count": 170,
+        "quiet_hour": 23,
+        "quiet_count": 14
+      },
+      "actual_tools": [
+        {
+          "tool": "events_by_hour",
+          "args": {}
+        }
+      ],
+      "response_text": "Gli eventi sono distribuiti durante tutte le ore del giorno. L'ora di punta è le 7:00 con 170 eventi, mentre l'ora più tranquilla è alle 23:00 con 14 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5380,
+        "output_tokens": 52,
+        "total_tokens": 5432,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T041",
+      "tool": "events_by_hour",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "A che ora avvengono più violazioni nell'area Uscita Pedane?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {
+        "camera_name": "Uscita Pedane Bottom Extended"
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "events_by_hour",
+          "args": {
+            "camera_name": "Uscita Pedane Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Nell'area Uscita Pedane, la maggior parte delle violazioni si verifica alle 7 del mattino, con 70 eventi. L'ora più tranquilla è alle 23, con solo 2 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente risponde direttamente e specificamente alla domanda, fornendo l'ora esatta e il numero di eventi. Fornisce anche un utile dato aggiuntivo.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5394,
+        "output_tokens": 48,
+        "total_tokens": 5442,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T043",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Esiste un pattern giornaliero ricorrente negli eventi? Quale giorno della settimana e a che ora si concentrano di più?",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {},
+      "ground_truth": "Mercoledì alle 13:00 con 47 eventi",
+      "actual_tools": [
+        {
+          "tool": "events_by_weekday_hour",
+          "args": {}
+        }
+      ],
+      "response_text": "Certo, c'è un pattern giornaliero negli eventi. Il picco di eventi si verifica il mercoledì alle 13, con 47 rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_weekday_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "label e conteggio corretti nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5388,
+        "output_tokens": 37,
+        "total_tokens": 5425,
+        "thinking_tokens": 0,
+        "cached_tokens": 4674
+      }
+    },
+    {
+      "id": "T044",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mostrami una heatmap degli eventi distribuiti per giorno della settimana e ora del giorno.",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {},
+      "ground_truth": {
+        "peak_weekday": "Mercoledì",
+        "peak_hour": 13,
+        "peak_count": 47
+      },
+      "actual_tools": [
+        {
+          "tool": "events_by_weekday_hour",
+          "args": {}
+        }
+      ],
+      "response_text": "Certo, ecco la heatmap degli eventi distribuiti per giorno della settimana e ora del giorno. Il picco di eventi si registra il Mercoledì alle 13, con 47 rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_weekday_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5379,
+        "output_tokens": 43,
+        "total_tokens": 5422,
+        "thinking_tokens": 0,
+        "cached_tokens": 4670
+      }
+    },
+    {
+      "id": "T045",
+      "tool": "events_by_weekday_hour",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nella zona Gasolio CAT, c'è un orario e un giorno della settimana in cui si concentrano più violazioni?",
+      "expected_tool": "events_by_weekday_hour",
+      "expected_args": {
+        "camera_name": "Gasolio CAT"
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "events_by_weekday_hour",
+          "args": {
+            "camera_name": "Gasolio CAT"
+          }
+        }
+      ],
+      "response_text": "Nella zona Gasolio CAT, il picco di violazioni si verifica il mercoledì alle 18, con 6 eventi registrati in quell'ora. In totale, ci sono stati 295 eventi in quest'area.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_weekday_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 4,
+          "completezza": 5,
+          "note": "L'agente risponde direttamente alla domanda fornendo giorno e orario specifici, oltre a dettagli aggiuntivi pertinenti. Non potendo verificare i dati, la correttezza è valutata sulla capacità di fornire una risposta strutturata e numerica.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5395,
+        "output_tokens": 51,
+        "total_tokens": 5446,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T046",
+      "tool": "get_event_by_id",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Dimmi tutto sull'evento con ID 4594.",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {
+        "event_id": 4594
+      },
+      "ground_truth": {
+        "event_id": 4594,
+        "camera_name": "Deposito Pedane Bottom Extended",
+        "event_datetime": "2026-05-06T19:57:20",
+        "severity": 8,
+        "reviewed": false,
+        "detections": [
+          {
+            "violation_type": "No Hard Hat",
+            "confidence": 83.0
+          }
+        ]
+      },
+      "actual_tools": [
+        {
+          "tool": "get_event_by_id",
+          "args": {
+            "event_id": 4594,
+            "fields": [
+              "*"
+            ]
+          }
+        }
+      ],
+      "response_text": "L'evento 4594 è stato rilevato il 6 maggio 2026 alle 19:57:20 dalla telecamera Deposito Pedane. Si tratta di un evento di rischio operatori, con una gravità di 8. Non è ancora stato revisionato e la rilevazione ha indicato l'assenza del caschetto con una confidenza dell'83%.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: get_event_by_id"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 4,
+          "completezza": 4,
+          "note": "La risposta è corretta e quasi completa. Manca solo una parte del nome della telecamera (Bottom Extended).",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5467,
+        "output_tokens": 85,
+        "total_tokens": 5552,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T047",
+      "tool": "get_event_by_id",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Esiste un evento con ID 9999999 nel database?",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {
+        "event_id": 9999999
+      },
+      "ground_truth": "non trovato / non esiste",
+      "actual_tools": [
+        {
+          "tool": "get_event_by_id",
+          "args": {
+            "event_id": 9999999,
+            "fields": [
+              "event_id"
+            ]
+          }
+        }
+      ],
+      "response_text": "Mi dispiace, non è stato trovato alcun evento con ID 9999999 nel database.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: get_event_by_id"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "risposta indica evento inesistente"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5370,
+        "output_tokens": 24,
+        "total_tokens": 5394,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T048",
+      "tool": "get_event_by_id",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Mostrami i dettagli dell'evento 3000: dove è stato rilevato, quando, con quale livello di gravità e quale tipo di violazione.",
+      "expected_tool": "get_event_by_id",
+      "expected_args": {
+        "event_id": 3000
+      },
+      "ground_truth": {
+        "event_id": 3000,
+        "camera_name": "Deposito Pedane Bottom Extended",
+        "event_datetime": "2026-04-12T09:19:15",
+        "severity": 6,
+        "detections": [
+          {
+            "violation_type": "No Face cover",
+            "confidence": 74.0
+          }
+        ]
+      },
+      "actual_tools": [
+        {
+          "tool": "get_event_by_id",
+          "args": {
+            "event_id": 3000,
+            "fields": [
+              "event_datetime",
+              "camera_name",
+              "severity",
+              "detections"
+            ]
+          }
+        }
+      ],
+      "response_text": "L'evento 3000 è stato rilevato il 12 aprile 2026 alle 09:19:15 dalla telecamera \"Deposito Pedane Bottom Extended\". La gravità era di livello 6, e la violazione rilevata era il mancato uso della mascherina.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: get_event_by_id"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta dell'agente è completamente corretta e completa, rispondendo a tutti gli aspetti della domanda con i dettagli del ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5469,
+        "output_tokens": 67,
+        "total_tokens": 5536,
+        "thinking_tokens": 0,
+        "cached_tokens": 4642
+      }
+    },
+    {
+      "id": "T050",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Elenca i primi 10 eventi critici in ordine cronologico (dal più vecchio al più recente).",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "limit": 10,
+        "descending_search_order": false,
+        "min_severity": 7
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "list_events",
+          "args": {
+            "min_severity": 7,
+            "limit": 10,
+            "descending_search_order": false,
+            "fields": [
+              "event_id",
+              "event_datetime",
+              "camera_name",
+              "event_type",
+              "severity"
+            ]
+          }
+        }
+      ],
+      "response_text": "Ecco i primi 10 eventi critici più vecchi che ho trovato:\n\nIl 7 aprile 2026 alle 17:55:52, due eventi di mancato uso del caschetto sono stati rilevati nell'area Carico Calce, entrambi con severità 8.\n\nSempre il 7 aprile 2026, si sono verificati altri eventi di mancato uso del caschetto con severità 8:\nalle 18:17:28 nella zona Gasolio CAT,\nalle 18:37:18 sia in Gasolio CAT che in Griglia,\nalle 18:50:06 ancora in Griglia,\nalle 19:06:17 al Cancello JMS,\nalle 20:04:39 e alle 20:05:15 nuovamente in Carico Calce,\ne infine alle 21:14:14 in Griglia.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: list_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito esattamente 10 eventi in ordine cronologico come richiesto, dimostrando precisione e completezza.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6911,
+        "output_tokens": 213,
+        "total_tokens": 7124,
+        "thinking_tokens": 0,
+        "cached_tokens": 4731
+      }
+    },
+    {
+      "id": "T051",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Elenca gli ultimi eventi rilevati dall'area Cancello JMS.",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "camera_name": "Cancello JMS"
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "list_events",
+          "args": {
+            "fields": [
+              "event_id",
+              "event_datetime",
+              "camera_name",
+              "event_type",
+              "severity"
+            ],
+            "camera_name": "Cancello JMS"
+          }
+        }
+      ],
+      "response_text": "Gli ultimi eventi rilevati dal Cancello JMS sono i seguenti:\n\nIl 5 maggio 2026 alle 06:15:54, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 30 aprile 2026 alle 10:27:07, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 30 aprile 2026 alle 10:24:44, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 15 aprile 2026 alle 18:10:33, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 15 aprile 2026 alle 10:23:59, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 13 aprile 2026 alle 13:38:37, un evento di tipo mancato uso del caschetto con gravità 8.\nL'11 aprile 2026 alle 09:45:10, un evento di tipo mancato uso del caschetto con gravità 8.\nL'11 aprile 2026 alle 07:07:22, un evento di tipo mancato uso del caschetto con gravità 8.\nIl 7 aprile 2026 alle 19:06:17, un evento di tipo mancato uso del caschetto con gravità 8.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: list_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta elenca gli eventi richiesti in modo chiaro e dettagliato, fornendo tutte le informazioni pertinenti.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6734,
+        "output_tokens": 353,
+        "total_tokens": 7087,
+        "thinking_tokens": 0,
+        "cached_tokens": 4721
+      }
+    },
+    {
+      "id": "T053",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Mostrami i dettagli completi (incluse le detection) degli ultimi 3 eventi di Materie Prime.",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "camera_name": "Materie Prime",
+        "limit": 3,
+        "fields": [
+          "*"
+        ]
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "list_events",
+          "args": {
+            "camera_name": "Materie Prime",
+            "limit": 3,
+            "fields": [
+              "*"
+            ]
+          }
+        }
+      ],
+      "response_text": "Assolutamente, ecco gli ultimi 3 eventi rilevati nella zona Materie Prime con tutti i dettagli:\n\nIl primo evento, ID 3710, risale al 17 aprile 2026 alle 12:31:25. Era un evento di distanza insufficiente tra veicoli, con gravità 6. Le rilevazioni mostrano un camion con il 93% di confidenza e un'auto con il 74%.\n\nIl secondo evento, ID 3518, è del 16 aprile 2026 alle 09:57:41. Anche questo era un evento di distanza insufficiente tra veicoli, con gravità 6. Sono stati rilevati un camion con il 63% di confidenza e un'auto con l'80%.\n\nIl terzo evento, ID 3243, è stato rilevato il 14 aprile 2026 alle 12:45:13, sempre di distanza insufficiente tra veicoli, con gravità 6. In questo caso sono state rilevate due auto, una con il 69% e l'altra con l'86% di confidenza.\n\nTutti e tre questi eventi non sono stati ancora revisionati.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: list_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 4,
+          "completezza": 5,
+          "note": "L'agente ha fornito tutti i dettagli richiesti per i 3 eventi, incluse le detection, e ha aggiunto un'informazione utile.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6160,
+        "output_tokens": 274,
+        "total_tokens": 6434,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T054",
+      "tool": "events_per_day_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Mostrami il trend giornaliero degli eventi separato per tipo di violazione DPI.",
+      "expected_tool": "events_per_day_by_violation_type",
+      "expected_args": {},
+      "ground_truth": {
+        "top_type": "No Hard Hat",
+        "violation_types": 6
+      },
+      "actual_tools": [
+        {
+          "tool": "events_per_day_by_violation_type",
+          "args": {}
+        }
+      ],
+      "response_text": "Ecco il trend giornaliero degli eventi divisi per tipo di violazione DPI. Il totale degli eventi è 2093 e il picco si è verificato il 14 aprile 2026 con 100 eventi di mancato uso del caschetto.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 0.4,
+          "score_raw": 2,
+          "correttezza": 3,
+          "completezza": 2,
+          "note": "L'agente identifica correttamente il tipo di violazione al picco, ma la risposta non presenta un trend giornaliero completo né elenca tutti i tipi di violazione, omette il numero di tipi di violazione dal ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5413,
+        "output_tokens": 57,
+        "total_tokens": 5470,
+        "thinking_tokens": 0,
+        "cached_tokens": 4692
+      }
+    },
+    {
+      "id": "T055",
+      "tool": "events_per_day_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Come si distribuiscono giorno per giorno le violazioni nell'area Deposito Pedane, separate per tipo?",
+      "expected_tool": "events_per_day_by_violation_type",
+      "expected_args": {
+        "camera_name": "Deposito Pedane Bottom Extended"
+      },
+      "ground_truth": {
+        "violation_types": 3
+      },
+      "actual_tools": [
+        {
+          "tool": "events_per_day_by_violation_type",
+          "args": {
+            "camera_name": "Deposito Pedane Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Nell'area Deposito Pedane, ho trovato 395 eventi totali distribuiti su 3 tipi di violazioni. Il picco di eventi si è verificato il 10 aprile 2026, con 14 rilevazioni di mancato uso del gilet ad alta visibilità.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_per_day_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 0.4,
+          "score_raw": 2,
+          "correttezza": 5,
+          "completezza": 2,
+          "note": "L'agente identifica correttamente il numero di tipi di violazione. Tuttavia, non fornisce la distribuzione giorno per giorno e per tipo richiesta, ma solo un esempio di picco.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5427,
+        "output_tokens": 65,
+        "total_tokens": 5492,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T056",
+      "tool": "multi_tool",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Che percentuale degli eventi totali ha rilevato la telecamera Uscita Pedane?",
+      "expected_tool": "rank_by_count + percentage",
+      "expected_args": [
+        {
+          "column": "camera_name"
+        },
+        {
+          "value": 630,
+          "total": 2090
+        }
+      ],
+      "ground_truth": 30.14,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {}
+        },
+        {
+          "tool": "count_events",
+          "args": {
+            "camera_name": "Uscita Pedane Bottom Extended"
+          }
+        },
+        {
+          "tool": "percentage",
+          "args": {
+            "total": 2090,
+            "value": 630
+          }
+        }
+      ],
+      "response_text": "La telecamera Uscita Pedane Bottom Extended ha rilevato circa il 30,14% degli eventi totali.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'percentage']"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 30.14 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5486,
+        "output_tokens": 27,
+        "total_tokens": 5513,
+        "thinking_tokens": 0,
+        "cached_tokens": 4449
+      }
+    },
+    {
+      "id": "T057",
+      "tool": "multi_tool",
+      "t_eval": "V",
+      "difficulty": "hard",
+      "question": "Quante violazioni di caschetto in più ci sono rispetto alle violazioni di gilet?",
+      "expected_tool": "rank_by_violation_type + subtract",
+      "expected_args": [
+        {},
+        {
+          "a": 1250,
+          "b": 672
+        }
+      ],
+      "ground_truth": 578,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "violation_type": "No Hard Hat"
+          }
+        },
+        {
+          "tool": "count_events",
+          "args": {
+            "violation_type": "No High Vis vest"
+          }
+        },
+        {
+          "tool": "subtract",
+          "args": {
+            "b": 672,
+            "a": 1250
+          }
+        }
+      ],
+      "response_text": "Ci sono 578 violazioni in più per il mancato uso del caschetto rispetto al mancato uso del gilet ad alta visibilità.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'subtract']"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 578 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5489,
+        "output_tokens": 31,
+        "total_tokens": 5520,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T058",
+      "tool": "multi_tool",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Quale percentuale degli eventi di aprile si è verificata nella seconda metà del mese (dal 16 in poi)?",
+      "expected_tool": "count_events (×2) + percentage",
+      "expected_args": [
+        {
+          "date_start": "2026-04-01T00:00:00",
+          "date_end": "2026-04-30T23:59:59"
+        },
+        {
+          "date_start": "2026-04-16T00:00:00",
+          "date_end": "2026-04-30T23:59:59"
+        },
+        {
+          "value": 507,
+          "total": 1462
+        }
+      ],
+      "ground_truth": 34.68,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "date_start": "2026-04-01T00:00:00",
+            "date_end": "2026-04-30T23:59:59"
+          }
+        },
+        {
+          "tool": "count_events",
+          "args": {
+            "date_end": "2026-04-30T23:59:59",
+            "date_start": "2026-04-16T00:00:00"
+          }
+        },
+        {
+          "tool": "percentage",
+          "args": {
+            "value": 507,
+            "total": 1462
+          }
+        }
+      ],
+      "response_text": "Nella seconda metà di aprile si è verificato il 34,68% degli eventi totali del mese.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "2/2 tool attesi presenti; sequenza effettiva: ['count_events', 'count_events', 'percentage']"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "2/2 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 34.68 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5579,
+        "output_tokens": 24,
+        "total_tokens": 5643,
+        "thinking_tokens": 40,
+        "cached_tokens": 4461
+      }
+    },
+    {
+      "id": "OOS001",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Puoi dirmi le previsioni meteo di domani?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, non posso aiutarti con le previsioni meteo. Posso però fornirti informazioni dettagliate sugli eventi di sicurezza rilevati dalle telecamere CCTV.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non posso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5272,
+        "output_tokens": 36,
+        "total_tokens": 5308,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS002",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Qual è la distanza in chilometri tra Milano e Roma?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma posso rispondere solo a domande riguardanti gli eventi di sicurezza sul lavoro rilevati dalle telecamere CCTV. Non ho informazioni sulla distanza tra le città.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito un rifiuto educato e pertinente, spiegando i suoi limiti in linea con il ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5272,
+        "output_tokens": 36,
+        "total_tokens": 5308,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS004",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Dammi la normativa D.Lgs. 81/2008 sull'obbligo di uso dei DPI in cantiere.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma non posso aiutarti con richieste relative a normative specifiche come il D.Lgs. 81/2008. Il mio compito è analizzare gli eventi di sicurezza rilevati dalle telecamere CCTV.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non posso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5291,
+        "output_tokens": 50,
+        "total_tokens": 5421,
+        "thinking_tokens": 80,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS005",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Come si indossa correttamente un caschetto di sicurezza?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma la mia funzionalità è limitata all'analisi degli eventi di sicurezza rilevati dalle telecamere CCTV. Non posso fornire istruzioni su come indossare correttamente un caschetto di sicurezza.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non posso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5271,
+        "output_tokens": 44,
+        "total_tokens": 5315,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS006",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Chi è il responsabile della sicurezza in azienda?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma non ho accesso a informazioni sul personale aziendale, come il responsabile della sicurezza. Posso aiutarti con domande relative agli eventi di sicurezza rilevati dalle telecamere CCTV.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non ho accesso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5269,
+        "output_tokens": 41,
+        "total_tokens": 5371,
+        "thinking_tokens": 61,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS008",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Confronta le performance di sicurezza di questo impianto con la media del settore manifatturiero italiano.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma non ho accesso a dati esterni o a benchmark di settore per fare confronti. Posso solo fornirti informazioni basate sugli eventi di sicurezza rilevati dalle telecamere CCTV in questo impianto.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non ho accesso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5282,
+        "output_tokens": 45,
+        "total_tokens": 5327,
+        "thinking_tokens": 0,
+        "cached_tokens": 4742
+      }
+    },
+    {
+      "id": "OOS009",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Traduci la frase 'nessun uso del caschetto' in inglese.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "La traduzione di 'nessun uso del caschetto' in inglese è 'no hard hat usage'.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 0.2,
+          "score_raw": 1,
+          "correttezza": 1,
+          "completezza": 1,
+          "note": "La risposta dell'agente ('no hard hat usage') è una traduzione letterale e corretta della frase data. Tuttavia, non corrisponde al ground truth fornito ('rifiuto educato'), che è una frase completamente diversa e non una traduzione dell'input.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5276,
+        "output_tokens": 21,
+        "total_tokens": 5330,
+        "thinking_tokens": 33,
+        "cached_tokens": 4742
+      }
+    },
+    {
+      "id": "OOS010",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Quali telecamere del sistema hanno bisogno di manutenzione?",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma non ho informazioni sullo stato di manutenzione delle telecamere. Posso fornirti dati e statistiche sugli eventi di sicurezza rilevati dalle telecamere, come il numero di violazioni, i tipi di violazioni più comuni o la gravità degli eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito un rifiuto educato come richiesto dal ground truth e ha offerto ulteriore assistenza pertinente.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5273,
+        "output_tokens": 59,
+        "total_tokens": 5382,
+        "thinking_tokens": 50,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T005",
+      "tool": "count_events",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Nessuno degli eventi è stato ancora revisionato manualmente, vero? Fammi una conferma con il numero.",
+      "expected_tool": "count_events",
+      "expected_args": {
+        "reviewed": false
+      },
+      "ground_truth": "Conferma che nessun evento è stato revisionato. È corretta sia la formulazione '0 eventi revisionati' sia '2090 eventi non revisionati': entrambe confermano lo stesso fatto.",
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {
+            "reviewed": false
+          }
+        }
+      ],
+      "response_text": "Sì, te lo confermo. Tutti i 2090 eventi presenti nel sistema non sono ancora stati revisionati manualmente.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente conferma la richiesta e fornisce il numero esatto in modo corretto, allineandosi perfettamente con il ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5813,
+        "output_tokens": 27,
+        "total_tokens": 5840,
+        "thinking_tokens": 0,
+        "cached_tokens": 5666
+      }
+    },
+    {
+      "id": "T042",
+      "tool": "events_by_hour",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nelle ore notturne (tra mezzanotte e le 6) quanti eventi critici si sono verificati?",
+      "expected_tool": "events_by_hour",
+      "expected_args": {
+        "min_severity": 7
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "events_by_hour",
+          "args": {
+            "min_severity": 7,
+            "max_severity": 10
+          }
+        }
+      ],
+      "response_text": "Ho controllato i dati, ma con le informazioni attuali non riesco a fornirti il conteggio esatto degli eventi critici che si sono verificati specificamente tra mezzanotte e le 6 del mattino. Il sistema mi fornisce un riepilogo generale per fasce orarie, ma non il dettaglio ora per ora per poter fare un calcolo preciso in quell'intervallo.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: events_by_hour"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 4,
+          "note": "L'agente riconosce correttamente l'impossibilità di rispondere e fornisce una chiara spiegazione dovuta alla mancanza di dati dettagliati.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5913,
+        "output_tokens": 83,
+        "total_tokens": 6260,
+        "thinking_tokens": 264,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T049",
+      "tool": "list_events",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Mostrami gli ultimi 5 eventi registrati nel sistema.",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "limit": 5,
+        "descending_search_order": true
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "list_events",
+          "args": {
+            "limit": 5,
+            "fields": [
+              "event_id",
+              "event_datetime",
+              "camera_name",
+              "event_type",
+              "severity"
+            ]
+          }
+        }
+      ],
+      "response_text": "Ecco gli ultimi 5 eventi registrati:\n\nIl 6 maggio 2026 alle 19:57:20, nella zona Deposito Pedane, si è verificato un rischio operatori (evento generico di rischio coinvolgente operatori) con severità 8.\nQuasi contemporaneamente, il 6 maggio 2026 alle 19:57:16, sempre al Deposito Pedane, un altro rischio operatori (evento generico di rischio coinvolgente operatori) con severità 5.\nUn terzo evento, il 6 maggio 2026 alle 19:57:15, al Deposito Pedane, ha rilevato un rischio operatori (evento generico di rischio coinvolgente operatori) con severità 8.\nPoco prima, il 6 maggio 2026 alle 19:56:12, nella zona Griglia, è stato rilevato un mancato uso del caschetto con severità 8.\nInfine, il 6 maggio 2026 alle 19:11:42, nell'area Uscita Pedane, un evento di operatori senza gilet ad alta visibilità con severità 5.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: list_events"
+        },
+        "U": {
+          "score": 0.5,
+          "detail": "1/2 argomenti corretti | errati: descending_search_order: atteso=True ottenuto=None"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito esattamente i 5 eventi richiesti con dettagli chiari e pertinenti, mostrando un'ottima comprensione della domanda.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6587,
+        "output_tokens": 270,
+        "total_tokens": 6857,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T052",
+      "tool": "list_events",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Mostrami gli ultimi 5 eventi in cui è stato rilevato mancato uso della visiera.",
+      "expected_tool": "list_events",
+      "expected_args": {
+        "limit": 5,
+        "violation_type": "No Face cover"
+      },
+      "ground_truth": null,
+      "actual_tools": [
+        {
+          "tool": "list_events",
+          "args": {
+            "fields": [
+              "event_id",
+              "event_datetime",
+              "camera_name",
+              "event_type",
+              "severity"
+            ],
+            "violation_type": "No Face cover",
+            "limit": 5
+          }
+        }
+      ],
+      "response_text": "Gli ultimi 5 eventi in cui è stato rilevato il mancato uso della visiera sono i seguenti:\n\nIl 6 maggio 2026 alle 16:25:10 nella telecamera Deposito Pedane Bottom Extended c'è stato un evento di rischio operatori con severità 6.\nIl 6 maggio 2026 alle 16:25:09 nella telecamera Deposito Pedane Bottom Extended c'è stato un evento di rischio operatori con severità 6.\nIl 6 maggio 2026 alle 13:25:51 nella telecamera Deposito Pedane Bottom Extended c'è stato un evento di rischio operatori con severità 6.\nIl 6 maggio 2026 alle 13:25:37 nella telecamera Deposito Pedane Bottom Extended c'è stato un evento di rischio operatori con severità 6.\nIl 6 maggio 2026 alle 10:38:41 nella telecamera Deposito Pedane Bottom Extended c'è stato un evento di rischio operatori con severità 6.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: list_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "2/2 argomenti corretti"
+        },
+        "V": {
+          "score": 0.6,
+          "score_raw": 3,
+          "correttezza": 2,
+          "completezza": 2,
+          "note": "L'agente elenca 5 eventi ma non conferma che siano specificamente correlati al mancato uso della visiera, indicando solo 'rischio operatori' per ciascuno. La specificità della richiesta non è pienamente soddisfatta nei dettagli.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6596,
+        "output_tokens": 247,
+        "total_tokens": 6843,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS003",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Scrivi un'email al responsabile della sicurezza con un riepilogo settimanale.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma non posso scrivere email o redigere documenti. Posso solo analizzare i dati sugli eventi di sicurezza presenti nel database.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non posso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5746,
+        "output_tokens": 30,
+        "total_tokens": 5776,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "OOS007",
+      "tool": "out_of_scope",
+      "t_eval": "R",
+      "difficulty": "hard",
+      "question": "Crea un rapporto PDF per l'INAIL con tutti gli incidenti del mese di aprile.",
+      "expected_tool": "REFUSAL",
+      "expected_args": null,
+      "ground_truth": "rifiuto educato",
+      "actual_tools": [],
+      "response_text": "Mi dispiace, ma posso solo analizzare gli eventi di sicurezza presenti nel database. Non posso creare documenti PDF o rapporti per enti esterni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "nessun tool chiamato (corretto)"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso (refusal)"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "keyword",
+          "detail": "keyword di rifiuto trovata: 'non posso'"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5747,
+        "output_tokens": 29,
+        "total_tokens": 5776,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T009",
+      "tool": "rank_by_count",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Quale telecamera ha registrato più eventi in assoluto?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "camera_name"
+      },
+      "ground_truth": "Uscita Pedane Bottom Extended con 630 eventi",
+      "actual_tools": [
+        {
+          "tool": "rank_by_count",
+          "args": {
+            "column": "camera_name"
+          }
+        }
+      ],
+      "response_text": "La telecamera \"Uscita Pedane\" ha registrato il maggior numero di eventi, ben 630.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "label e conteggio corretti nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6473,
+        "output_tokens": 25,
+        "total_tokens": 6498,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T010",
+      "tool": "rank_by_count",
+      "t_eval": "V",
+      "difficulty": "medium",
+      "question": "Dammi la classifica completa di tutte le telecamere per numero di eventi.",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "camera_name"
+      },
+      "ground_truth": [
+        {
+          "value": "Uscita Pedane Bottom Extended",
+          "count": 630
+        },
+        {
+          "value": "Deposito Pedane Bottom Extended",
+          "count": 395
+        },
+        {
+          "value": "Gasolio CAT",
+          "count": 295
+        },
+        {
+          "value": "Carico Calce",
+          "count": 280
+        },
+        {
+          "value": "Griglia",
+          "count": 212
+        },
+        {
+          "value": "Est. Magazzino SX",
+          "count": 126
+        },
+        {
+          "value": "P.le Box Mulini",
+          "count": 110
+        },
+        {
+          "value": "M. P. Dosatori",
+          "count": 25
+        },
+        {
+          "value": "Cancello JMS",
+          "count": 9
+        },
+        {
+          "value": "Materie Prime",
+          "count": 8
+        }
+      ],
+      "actual_tools": [
+        {
+          "tool": "rank_by_count",
+          "args": {
+            "column": "camera_name"
+          }
+        }
+      ],
+      "response_text": "Certo, ecco la classifica completa delle telecamere per numero di eventi:\n\n1. Uscita Pedane con 630 eventi\n2. Deposito Pedane con 395 eventi\n3. Gasolio CAT con 295 eventi\n4. Carico Calce con 280 eventi\n5. Griglia con 212 eventi\n6. Est. Magazzino SX con 126 eventi\n7. P.le Box Mulini con 110 eventi\n8. M. P. Dosatori con 25 eventi\n9. Cancello JMS con 9 eventi\n10. Materie Prime con 8 eventi",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 4,
+          "completezza": 5,
+          "note": "L'agente ha fornito tutti i dati numerici e l'ordine corretto, ma i nomi di due telecamere sono incompleti rispetto al ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6476,
+        "output_tokens": 144,
+        "total_tokens": 6620,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T012",
+      "tool": "rank_by_count",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Qual è la telecamera meno attiva nel dataset?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "camera_name"
+      },
+      "ground_truth": "Materie Prime con 8 eventi",
+      "actual_tools": [
+        {
+          "tool": "rank_by_count",
+          "args": {
+            "column": "camera_name"
+          }
+        }
+      ],
+      "response_text": "La telecamera meno attiva nel dataset è Materie Prime, con 8 eventi rilevati.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "label e conteggio corretti nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6470,
+        "output_tokens": 19,
+        "total_tokens": 6489,
+        "thinking_tokens": 0,
+        "cached_tokens": 5694
+      }
+    },
+    {
+      "id": "T013",
+      "tool": "rank_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Come si distribuisce la severità degli eventi? Quanti eventi ci sono per ogni livello di gravità?",
+      "expected_tool": "rank_by_count",
+      "expected_args": {
+        "column": "severity"
+      },
+      "ground_truth": [
+        {
+          "value": "8",
+          "count": 1250
+        },
+        {
+          "value": "5",
+          "count": 451
+        },
+        {
+          "value": "6",
+          "count": 333
+        },
+        {
+          "value": "7",
+          "count": 56
+        }
+      ],
+      "actual_tools": [
+        {
+          "tool": "rank_by_count",
+          "args": {
+            "column": "severity"
+          }
+        }
+      ],
+      "response_text": "Gli eventi si distribuiscono per severità in questo modo:\n\nCi sono 1250 eventi con gravità 8.\nCi sono 451 eventi con gravità 5.\nCi sono 333 eventi con gravità 6.\nCi sono 56 eventi con gravità 7.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito tutti i dati richiesti in modo accurato e completo, corrispondendo perfettamente al ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6144,
+        "output_tokens": 68,
+        "total_tokens": 6212,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T014",
+      "tool": "group_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Fammi un grafico che mostra quanti eventi ha registrato ogni telecamera.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "camera_name"
+      },
+      "ground_truth": {
+        "top_value": "Uscita Pedane Bottom Extended",
+        "top_count": 630,
+        "categories": 10
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_count",
+          "args": {
+            "column": "camera_name"
+          }
+        }
+      ],
+      "response_text": "Certo, ho creato un grafico che mostra il numero di eventi registrati da ogni telecamera. Il grafico ti mostrerà visivamente la distribuzione.\n\nTi anticipo che la telecamera con più eventi è Uscita Pedane Bottom Extended con 630 rilevazioni, mentre Materie Prime ne ha registrati solo 8.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6021,
+        "output_tokens": 70,
+        "total_tokens": 6091,
+        "thinking_tokens": 0,
+        "cached_tokens": 5692
+      }
+    },
+    {
+      "id": "T015",
+      "tool": "group_by_count",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Mostrami visivamente come si distribuisce la gravità degli eventi nel dataset.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "severity"
+      },
+      "ground_truth": {
+        "top_value": "8",
+        "top_count": 1250,
+        "categories": 4
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_count",
+          "args": {
+            "column": "severity"
+          }
+        }
+      ],
+      "response_text": "La distribuzione della gravità degli eventi mostra che la maggior parte degli eventi, ben 1250, hanno una gravità di livello 8. Il livello di gravità meno frequente è il 7, con 56 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_count"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6012,
+        "output_tokens": 50,
+        "total_tokens": 6062,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T016",
+      "tool": "group_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Fammi un grafico della distribuzione degli eventi per area di lavoro limitata al mese di maggio.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "camera_name",
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59"
+      },
+      "ground_truth": {
+        "top_value": "Uscita Pedane Bottom Extended",
+        "top_count": 183,
+        "categories": 9
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_count",
+          "args": {
+            "column": "camera_name",
+            "date_end": "2026-05-06T23:59:59",
+            "date_start": "2026-05-01T00:00:00"
+          }
+        }
+      ],
+      "response_text": "Certo, ho generato un grafico che mostra la distribuzione degli eventi per area di lavoro limitatamente al mese di maggio, fino alla data attuale disponibile. Il grafico evidenzia che l'area Uscita Pedane Bottom Extended ha registrato il maggior numero di eventi, con 183 rilevazioni, mentre M. P. Dosatori ne ha avuto solo 1.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_count"
+        },
+        "U": {
+          "score": 0.67,
+          "detail": "2/3 argomenti corretti | errati: date_end: atteso='2026-05-31T23:59:59' ottenuto='2026-05-06T23:59:59'"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "text+numeric",
+          "detail": "valori chiave del summary trovati nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6076,
+        "output_tokens": 77,
+        "total_tokens": 6153,
+        "thinking_tokens": 0,
+        "cached_tokens": 5538
+      }
+    },
+    {
+      "id": "T017",
+      "tool": "group_by_count",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Voglio un grafico con la distribuzione degli eventi per severità solo per la telecamera Deposito Pedane.",
+      "expected_tool": "group_by_count",
+      "expected_args": {
+        "column": "severity",
+        "camera_name": "Deposito Pedane Bottom Extended"
+      },
+      "ground_truth": {
+        "categories": 3
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_count",
+          "args": {
+            "column": "severity",
+            "camera_name": "Deposito Pedano Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Sembra che non ci siano eventi registrati per la telecamera Deposito Pedane. Forse c'è stato un errore nel nome o non ci sono state rilevazioni.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_count"
+        },
+        "U": {
+          "score": 0.5,
+          "detail": "1/2 argomenti corretti | errati: camera_name: atteso='Deposito Pedane Bottom Extended' ottenuto='Deposito Pedano Bottom Extended'"
+        },
+        "V": {
+          "score": 0.2,
+          "score_raw": 1,
+          "correttezza": 1,
+          "completezza": 1,
+          "note": "L'agente afferma che non ci sono eventi, contrariamente al ground truth che indica l'esistenza di 3 categorie. Non ha fornito il grafico richiesto.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5983,
+        "output_tokens": 36,
+        "total_tokens": 6019,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T018",
+      "tool": "rank_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Quale tipo di violazione DPI si verifica più spesso?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {},
+      "ground_truth": "No Hard Hat con 1250 eventi",
+      "actual_tools": [
+        {
+          "tool": "rank_by_violation_type",
+          "args": {}
+        }
+      ],
+      "response_text": "La violazione DPI che si verifica più spesso è il \"Senza caschetto\", con 1250 eventi. Seguono il \"Senza gilet\" con 672 eventi e il \"Senza visiera\" con 106 eventi. Ci sono anche alcuni eventi legati all'avvicinamento di persone, auto e camion.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è perfettamente corretta e completa, fornendo l'informazione esatta richiesta dal ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6233,
+        "output_tokens": 75,
+        "total_tokens": 6308,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T019",
+      "tool": "rank_by_violation_type",
+      "t_eval": "V",
+      "difficulty": "easy",
+      "question": "Dammi la classifica completa delle violazioni DPI per frequenza.",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {},
+      "ground_truth": [
+        {
+          "value": "No Hard Hat",
+          "count": 1250
+        },
+        {
+          "value": "No High Vis vest",
+          "count": 672
+        },
+        {
+          "value": "No Face cover",
+          "count": 106
+        },
+        {
+          "value": "person",
+          "count": 56
+        },
+        {
+          "value": "car",
+          "count": 5
+        },
+        {
+          "value": "truck",
+          "count": 4
+        }
+      ],
+      "actual_tools": [
+        {
+          "tool": "rank_by_violation_type",
+          "args": {}
+        }
+      ],
+      "response_text": "Le violazioni DPI più frequenti sono, in ordine:\n\nSenza caschetto: 1250 eventi\nSenza gilet: 672 eventi\nSenza visiera: 106 eventi\nAvvicinamento persona: 56 eventi\nAvvicinamento auto: 5 eventi\nAvvicinamento camion: 4 eventi",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito una classifica completa e corretta delle violazioni, corrispondente perfettamente al ground truth.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6234,
+        "output_tokens": 77,
+        "total_tokens": 6311,
+        "thinking_tokens": 0,
+        "cached_tokens": 5686
+      }
+    },
+    {
+      "id": "T020",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Nell'area Deposito Pedane, quale violazione DPI viene commessa più spesso?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {
+        "camera_name": "Deposito Pedane Bottom Extended"
+      },
+      "ground_truth": "No High Vis vest con 154 eventi",
+      "actual_tools": [
+        {
+          "tool": "rank_by_violation_type",
+          "args": {
+            "camera_name": "Deposito Pedane Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Nell'area Deposito Pedane la violazione DPI commessa più spesso è il mancato uso del gilet ad alta visibilità, con 154 eventi. Seguono il mancato uso del caschetto con 135 eventi e il mancato uso della visiera con 106 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è pienamente corretta e completa, identificando la violazione più frequente con il numero esatto di eventi.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6120,
+        "output_tokens": 65,
+        "total_tokens": 6185,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T022",
+      "tool": "rank_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Nell'area Carico Calce, come si distribuiscono le violazioni per tipo?",
+      "expected_tool": "rank_by_violation_type",
+      "expected_args": {
+        "camera_name": "Carico Calce"
+      },
+      "ground_truth": [
+        {
+          "value": "No Hard Hat",
+          "count": 238
+        },
+        {
+          "value": "person",
+          "count": 41
+        },
+        {
+          "value": "truck",
+          "count": 1
+        }
+      ],
+      "actual_tools": [
+        {
+          "tool": "rank_by_violation_type",
+          "args": {
+            "camera_name": "Carico Calce"
+          }
+        }
+      ],
+      "response_text": "Nell'area Carico Calce, le violazioni si distribuiscono così:\n\nCi sono 238 eventi di Senza caschetto.\nCi sono 41 eventi di Avvicinamento persona.\nC'è 1 evento di Avvicinamento camion.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: rank_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "La risposta è perfettamente corretta e completa, fornendo tutti i dati richiesti con le rispettive quantità e una buona interpretazione dei tipi di violazione.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6103,
+        "output_tokens": 58,
+        "total_tokens": 6161,
+        "thinking_tokens": 0,
+        "cached_tokens": 5661
+      }
+    },
+    {
+      "id": "T023",
+      "tool": "group_by_violation_type",
+      "t_eval": "R",
+      "difficulty": "medium",
+      "question": "Fammi un grafico che mostra la distribuzione delle violazioni DPI nel dataset completo.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {},
+      "ground_truth": {
+        "top_value": "No Hard Hat",
+        "top_count": 1250,
+        "categories": 6
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_violation_type",
+          "args": {}
+        }
+      ],
+      "response_text": "Ecco un grafico che mostra la distribuzione delle violazioni DPI. Il tipo di violazione più comune è \"Senza caschetto\" con 1250 eventi, mentre il meno frequente è \"Avvicinamento camion\" con 4 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 4,
+          "completezza": 3,
+          "note": "L'agente ha identificato correttamente la violazione più comune e il suo conteggio, ma ha omesso il numero totale di categorie di violazioni. Ha aggiunto informazioni extra non richieste.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6014,
+        "output_tokens": 52,
+        "total_tokens": 6066,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T024",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Mostrami visivamente come si distribuiscono le violazioni nell'area Deposito Pedane.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {
+        "camera_name": "Deposito Pedane Bottom Extended"
+      },
+      "ground_truth": {
+        "top_value": "No High Vis vest",
+        "top_count": 154,
+        "categories": 3
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_violation_type",
+          "args": {
+            "camera_name": "Deposito Pedane Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Certo, ecco una visualizzazione della distribuzione delle violazioni rilevate nell'area Deposito Pedane. Ci sono 3 categorie di violazioni. Quella più frequente è Senza gilet, con 154 eventi, mentre quella meno frequente è Senza visiera, con 106 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 0.8,
+          "score_raw": 4,
+          "correttezza": 5,
+          "completezza": 4,
+          "note": "L'agente ha estratto correttamente tutti i dati rilevanti dal ground truth, ma ha fornito una descrizione testuale anziché una visualizzazione effettiva.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6032,
+        "output_tokens": 67,
+        "total_tokens": 6099,
+        "thinking_tokens": 0,
+        "cached_tokens": 5626
+      }
+    },
+    {
+      "id": "T025",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "medium",
+      "question": "Voglio vedere un grafico delle violazioni registrate nell'area Uscita Pedane.",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {
+        "camera_name": "Uscita Pedane Bottom Extended"
+      },
+      "ground_truth": {
+        "top_value": "No High Vis vest",
+        "top_count": 442,
+        "categories": 2
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_violation_type",
+          "args": {
+            "camera_name": "Uscita Pedane Bottom Extended"
+          }
+        }
+      ],
+      "response_text": "Nell'area Uscita Pedane sono state registrate principalmente violazioni per Senza gilet, con 442 eventi, e Senza caschetto, con 188 eventi. Il grafico ti mostra la ripartizione esatta.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "1/1 argomenti corretti"
+        },
+        "V": {
+          "score": 1.0,
+          "score_raw": 5,
+          "correttezza": 5,
+          "completezza": 5,
+          "note": "L'agente ha fornito tutti i dati numerici e testuali richiesti dal ground truth in modo corretto e completo. La risposta è chiara e ben formulata.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6034,
+        "output_tokens": 52,
+        "total_tokens": 6086,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T026",
+      "tool": "group_by_violation_type",
+      "t_eval": "U",
+      "difficulty": "hard",
+      "question": "Fammi un grafico delle violazioni a maggio, solo per eventi critici (severità ≥ 7).",
+      "expected_tool": "group_by_violation_type",
+      "expected_args": {
+        "date_start": "2026-05-01T00:00:00",
+        "date_end": "2026-05-31T23:59:59",
+        "min_severity": 7
+      },
+      "ground_truth": {
+        "top_value": "No Hard Hat"
+      },
+      "actual_tools": [
+        {
+          "tool": "group_by_violation_type",
+          "args": {
+            "date_start": "2026-05-01T00:00:00",
+            "date_end": "2026-05-31T23:59:59",
+            "min_severity": 7
+          }
+        }
+      ],
+      "response_text": "Ecco il grafico delle violazioni di maggio con severità critica. Il tipo di violazione più comune è \"Senza caschetto\" con 394 eventi, mentre \"Avvicinamento persona\" è il meno frequente con 14 eventi.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: group_by_violation_type"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "3/3 argomenti corretti"
+        },
+        "V": {
+          "score": 0.4,
+          "score_raw": 2,
+          "correttezza": 4,
+          "completezza": 2,
+          "note": "L'agente ha identificato correttamente la violazione più comune, ma non ha fornito un grafico come richiesto, limitandosi a descrivere i dati.",
+          "method": "llm_judge"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 6077,
+        "output_tokens": 53,
+        "total_tokens": 6130,
+        "thinking_tokens": 0,
+        "cached_tokens": 0
+      }
+    },
+    {
+      "id": "T001",
+      "tool": "count_events",
+      "t_eval": "R",
+      "difficulty": "easy",
+      "question": "Quanti eventi di sicurezza ci sono in totale nel database?",
+      "expected_tool": "count_events",
+      "expected_args": {},
+      "ground_truth": 2090,
+      "actual_tools": [
+        {
+          "tool": "count_events",
+          "args": {}
+        }
+      ],
+      "response_text": "Ci sono 2090 eventi di sicurezza in totale nel database.",
+      "scores": {
+        "R": {
+          "score": 1.0,
+          "detail": "corretto: count_events"
+        },
+        "U": {
+          "score": 1.0,
+          "detail": "nessun arg atteso"
+        },
+        "V": {
+          "score": 1.0,
+          "method": "numeric",
+          "detail": "valore 2090 trovato nella risposta"
+        }
+      },
+      "usage": {
+        "prompt_tokens": 5960,
+        "output_tokens": 15,
+        "total_tokens": 5975,
+        "thinking_tokens": 0,
+        "cached_tokens": 5683
+      }
+    }
+  ],
+  "summary": {
+    "total": 68,
+    "in_scope": 58,
+    "out_of_scope": 10,
+    "R_accuracy": 1.0,
+    "U_accuracy": 0.977,
+    "V_score": 0.965,
+    "V_charts_excluded": [
+      "T014",
+      "T015",
+      "T016",
+      "T017",
+      "T023",
+      "T024",
+      "T025",
+      "T026",
+      "T044",
+      "T054",
+      "T055"
+    ],
+    "refusal_rate": 1.0,
+    "by_tool": {
+      "count_events": {
+        "n": 8,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "rank_by_count": {
+        "n": 5,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 0.96
+      },
+      "rank_by_violation_type": {
+        "n": 5,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "average_severity": {
+        "n": 5,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 0.96
+      },
+      "events_per_day": {
+        "n": 4,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "average_events_per_period": {
+        "n": 3,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "events_by_hour": {
+        "n": 4,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "events_by_weekday_hour": {
+        "n": 3,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "get_event_by_id": {
+        "n": 3,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 0.933
+      },
+      "list_events": {
+        "n": 5,
+        "R": 1.0,
+        "U": 0.9,
+        "V": 0.88
+      },
+      "events_per_day_by_violation_type": {
+        "n": 2,
+        "R": 1.0,
+        "U": 1.0,
+        "V": null
+      },
+      "multi_tool": {
+        "n": 3,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 1.0
+      },
+      "group_by_count": {
+        "n": 4,
+        "R": 1.0,
+        "U": 0.792,
+        "V": null
+      },
+      "group_by_violation_type": {
+        "n": 4,
+        "R": 1.0,
+        "U": 1.0,
+        "V": null
+      }
+    },
+    "by_difficulty": {
+      "easy": {
+        "n": 19,
+        "R": 1.0,
+        "U": 0.974,
+        "V": 0.947
+      },
+      "medium": {
+        "n": 28,
+        "R": 1.0,
+        "U": 1.0,
+        "V": 0.991
+      },
+      "hard": {
+        "n": 21,
+        "R": 1.0,
+        "U": 0.96,
+        "V": 0.95
+      }
+    },
+    "token_totals": {
+      "prompt": 386844,
+      "output": 4103,
+      "total": 391475,
+      "thinking": 528,
+      "cached": 129175
+    }
+  },
+  "completed": "2026-06-28T09:37:55.674086",
+  "rescored": "2026-06-27T16:51:20.114588"
+}

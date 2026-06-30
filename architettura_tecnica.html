@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Safety Agent — Architettura tecnica</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.1/mermaid.min.js"></script>
+<style>
+  :root{
+    --bg:#0e1117; --panel:#161b25; --panel2:#1c2330; --border:#2a3344;
+    --text:#dbe2ef; --muted:#8893a8; --accent:#5ec8f8; --accent2:#7ee787;
+    --warn:#f7b955; --danger:#ff7b7b; --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0; font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    background:radial-gradient(circle at 20% 0%, #182233 0%, var(--bg) 55%);
+    color:var(--text); padding:28px 32px 60px;
+  }
+  header{max-width:1280px; margin:0 auto 18px;}
+  h1{font-size:1.55rem; margin:0 0 4px; letter-spacing:.2px;}
+  .subtitle{color:var(--muted); font-size:.92rem; margin:0 0 18px;}
+  .meta-row{display:flex; gap:10px; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-bottom:18px;}
+  .meta-row span{background:var(--panel2); border:1px solid var(--border); padding:3px 10px; border-radius:20px;}
+
+  .callouts{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:12px; max-width:1280px; margin:0 auto 22px;}
+  .callout{background:var(--panel); border:1px solid var(--border); border-radius:10px; padding:14px 16px;}
+  .callout h3{margin:0 0 6px; font-size:.78rem; text-transform:uppercase; letter-spacing:.6px; color:var(--accent);}
+  .callout p{margin:0; font-size:.85rem; color:var(--text); line-height:1.45;}
+  .callout .num{font-size:1.4rem; font-weight:700; color:var(--accent2);}
+  .callout.warn h3{color:var(--warn);}
+  .callout.danger .num{color:var(--danger);}
+
+  .legend{max-width:1280px; margin:0 auto 16px; font-size:.78rem; color:var(--muted); display:flex; gap:18px; flex-wrap:wrap; align-items:center;}
+  .legend b{color:var(--text);}
+  .swatch{display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; vertical-align:middle;}
+
+  .diagram-wrap{
+    max-width:1600px; margin:0 auto; background:var(--panel);
+    border:1px solid var(--border); border-radius:14px; padding:18px 6px 8px;
+    overflow:auto; position:relative; max-height:85vh;
+  }
+  .diagram-wrap .hint{position:absolute; top:10px; right:18px; font-size:.72rem; color:var(--muted); background:var(--panel); padding:2px 8px; border-radius:6px;}
+  #graph{display:flex; justify-content:flex-start; padding:36px 40px 16px;}
+  #graph svg{min-width:1500px; height:auto;}
+  .zoom-controls{position:absolute; top:8px; left:18px; display:flex; gap:6px; z-index:5;}
+  .zoom-controls button{
+    background:var(--panel2); border:1px solid var(--border); color:var(--text);
+    border-radius:6px; width:28px; height:28px; cursor:pointer; font-size:.95rem;
+  }
+  .zoom-controls button:hover{border-color:var(--accent); color:var(--accent);}
+
+  /* mermaid node theming */
+  .node rect, .node polygon, .node circle{
+    stroke-width:1.4px !important; cursor:pointer; transition:filter .12s ease, stroke-width .12s ease;
+  }
+  .node:hover rect, .node:hover polygon{
+    filter:brightness(1.25); stroke-width:2.4px !important;
+  }
+  .edgeLabel{background-color:var(--panel) !important; color:var(--muted) !important;}
+  .cluster rect{rx:10px; ry:10px;}
+
+  #tooltip{
+    position:fixed; z-index:999; max-width:380px; background:var(--panel2);
+    border:1px solid var(--accent); border-radius:10px; padding:14px 16px;
+    box-shadow:0 12px 32px rgba(0,0,0,.55); font-size:.82rem; line-height:1.5;
+    pointer-events:none; opacity:0; transform:translateY(4px); transition:opacity .12s ease, transform .12s ease;
+  }
+  #tooltip.show{opacity:1; transform:translateY(0);}
+  #tooltip h4{margin:0 0 2px; font-size:.92rem; color:var(--accent);}
+  #tooltip .path{font-family:var(--mono); font-size:.72rem; color:var(--accent2); margin-bottom:8px; word-break:break-all;}
+  #tooltip ul{margin:6px 0 0; padding-left:18px;}
+  #tooltip li{margin-bottom:4px; color:var(--text);}
+  #tooltip li b{color:#fff;}
+  #tooltip .metrics{display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;}
+  #tooltip .metrics span{background:#0e1117; border:1px solid var(--border); border-radius:6px; padding:2px 7px; font-family:var(--mono); font-size:.7rem; color:var(--accent2);}
+
+  footer{max-width:1280px; margin:26px auto 0; color:var(--muted); font-size:.75rem; text-align:center;}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Safety Agent — Mappa tecnica del progetto</h1>
+  <p class="subtitle">Agente LLM (Gemini 2.5 Flash) per l'analisi di eventi di sicurezza CCTV via tool MCP su PostgreSQL. Passa il mouse sopra ogni nodo per i dettagli implementativi.</p>
+  <div class="meta-row">
+    <span>Stack: FastAPI · MCP (FastMCP) · SQLAlchemy · PostgreSQL · Gemini 2.5 Flash · matplotlib</span>
+    <span>~3.6k righe di codice Python</span>
+    <span>Snapshot repo: 22 giugno 2026</span>
+  </div>
+</header>
+
+<section class="callouts">
+  <div class="callout">
+    <h3>Principio cardine</h3>
+    <p>Il modello <b>non riceve mai il dump del DB</b>: accede solo via tool MCP. Risposte fondate sui dati, costi sotto controllo, privacy.</p>
+  </div>
+  <div class="callout">
+    <h3>Risparmio token (LEAN vs FULL)</h3>
+    <p><span class="num">55–57%</span> in meno di token di input a parità di qualità della risposta (LLM-as-judge). Vedi nodo T-Eval / Token Benchmark.</p>
+  </div>
+  <div class="callout">
+    <h3>T-Eval — ultimo run (18/06)</h3>
+    <p>R <span class="num">0.91</span> · U <span class="num">0.92</span> · V <span class="num">0.86</span> su 68 casi (58 in-scope + 10 out-of-scope, refusal rate 1.0)</p>
+  </div>
+  <div class="callout warn">
+    <h3>Punti deboli noti</h3>
+    <p>get_event_by_id → V=0.0 (3 casi, da investigare). multi_tool → R=0.5 (3 casi). Vedi nodo T-Eval per dettagli.</p>
+  </div>
+</section>
+
+<div class="legend">
+  <span><span class="swatch" style="background:#3a6ea8"></span><b>Frontend</b></span>
+  <span><span class="swatch" style="background:#3a8a6e"></span><b>API / Auth</b></span>
+  <span><span class="swatch" style="background:#8a5fb8"></span><b>Agente LLM</b></span>
+  <span><span class="swatch" style="background:#c97a3a"></span><b>MCP Server</b></span>
+  <span><span class="swatch" style="background:#3a8ac9"></span><b>Persistenza dati</b></span>
+  <span><span class="swatch" style="background:#5f8a3a"></span><b>Pipeline dati / grafici</b></span>
+  <span><span class="swatch" style="background:#b85f7a"></span><b>Test &amp; Benchmark</b></span>
+</div>
+
+<div class="diagram-wrap">
+  <span class="hint">hover sui nodi per i dettagli ↗</span>
+  <div class="zoom-controls">
+    <button id="zoomIn" title="Zoom in">+</button>
+    <button id="zoomOut" title="Zoom out">−</button>
+    <button id="zoomReset" title="Reset">⟲</button>
+  </div>
+  <div id="graph">
+    <pre class="mermaid">
+flowchart TB
+  CLIPY["cli.py"]
+
+  subgraph FE [" FRONTEND "]
+    UI["UI chat web<br/>index.html · chat.js"]
+  end
+
+  subgraph BACK [" API "]
+    APIAPP["app.py<br/>FastAPI + lifespan"]
+    AUTHN["auth.py<br/>API key"]
+    CHATROUTE["routes/chat.py<br/>/chat /stats /chat/reset"]
+  end
+
+  subgraph AG [" AGENTE ( Gemini 2.5 Flash ) "]
+    AGENT["core.py<br/>Agent"]
+    PROMPTS["prompts.py<br/>regole + traduzioni"]
+  end
+
+  subgraph MCPS [" MCP SERVER (FastMCP) "]
+    MCP["mcp-server.py<br/>~18 tool + risorsa schema"]
+  end
+
+  subgraph DATA [" PERSISTENZA "]
+    QUERIES["db/queries.py"]
+    MODELS["db/models.py<br/>SQLAlchemy ORM"]
+    WRITES["db/writes.py"]
+    PG[("PostgreSQL<br/>safety_events / event_detections")]
+  end
+
+  subgraph PIPE [" PIPELINE DATI "]
+    CSV[("Estrazione1.csv")]
+    ANALYZE["analyze.py<br/>parsing"]
+    IMPORTPY["import_to_db.py"]
+    VIZ["visualize.py /<br/>generate_demo_plots.py"]
+  end
+
+  subgraph CHARTS [" RENDER GRAFICI "]
+    PLOTCREATOR["plot-creator/<br/>generate_histograms.py"]
+  end
+
+  subgraph TEST [" TEST & BENCHMARK "]
+    TESTQ["test_queries.py"]
+    TESTMCP["test_mcp_live.py"]
+    TOKBENCH["run_benchmark.py /<br/>test_token_budget.py"]
+    TEVAL["run_t_eval.py<br/>T-Eval R · U · V"]
+  end
+
+  UI -- "POST /chat" --> APIAPP
+  CLIPY -- "agent.start()" --> AGENT
+  APIAPP --> AUTHN
+  APIAPP --> CHATROUTE
+  CHATROUTE -- "agent.send()" --> AGENT
+  AGENT -- "system prompt" --> PROMPTS
+  AGENT -- "stdio · ClientSession" --> MCP
+  MCP --> QUERIES
+  CHATROUTE -. "query diretta per il grafico" .-> QUERIES
+  CHATROUTE --> PLOTCREATOR
+  QUERIES --> MODELS
+  WRITES --> MODELS
+  MODELS --> PG
+  CSV --> ANALYZE --> IMPORTPY --> WRITES
+  ANALYZE --> VIZ
+  TESTQ -.-> QUERIES
+  TESTMCP -.-> MCP
+  TOKBENCH -.-> AGENT
+  TEVAL -.-> AGENT
+
+  classDef fe fill:#1d3550,stroke:#3a6ea8,color:#dbe2ef;
+  classDef back fill:#1d3d34,stroke:#3a8a6e,color:#dbe2ef;
+  classDef agent fill:#33264a,stroke:#8a5fb8,color:#dbe2ef;
+  classDef mcp fill:#4a2f1d,stroke:#c97a3a,color:#dbe2ef;
+  classDef data fill:#1d3346,stroke:#3a8ac9,color:#dbe2ef;
+  classDef pipe fill:#2a3a1d,stroke:#5f8a3a,color:#dbe2ef;
+  classDef test fill:#451d2c,stroke:#b85f7a,color:#dbe2ef;
+
+  class UI fe;
+  class APIAPP,AUTHN,CHATROUTE back;
+  class AGENT,PROMPTS,CLIPY agent;
+  class MCP mcp;
+  class QUERIES,MODELS,WRITES,PG data;
+  class CSV,ANALYZE,IMPORTPY,VIZ,PLOTCREATOR pipe;
+  class TESTQ,TESTMCP,TOKBENCH,TEVAL test;
+    </pre>
+  </div>
+</div>
+
+<footer>Diagramma generato a partire dal codice in repo (lettura diretta dei file, nessuna informazione inventata). Recap per il tutor — Safety Agent, 22 giugno 2026.</footer>
+
+<div id="tooltip"></div>
+
+<script>
+mermaid.initialize({
+  startOnLoad: true, theme: "base", securityLevel: "loose",
+  flowchart: { useMaxWidth: false, htmlLabels: true, nodeSpacing: 45, rankSpacing: 65 },
+  themeVariables: { fontFamily: "-apple-system,Segoe UI,Roboto,sans-serif", fontSize: "16px" }
+});
+
+const DETAILS = {
+  CLIPY: {
+    title: "cli.py", path: "cli.py · 26 righe",
+    items: [
+      "Client da terminale, alternativo alla UI web.",
+      "Usa <b>agent.start()</b>: tiene una singola <b>chat_session</b> stateful (storia intera, nessun trimming).",
+      "Nessuna autenticazione, nessun rendering grafico — solo testo + contatori token a console."
+    ]
+  },
+  UI: {
+    title: "UI Chat Web", path: "ui/index.html · chat.js · style.css · config.js",
+    items: [
+      "HTML/CSS/JS puro, nessun framework.",
+      "POST a <b>/chat</b> con {message}; mostra il testo e, se presente, <b>chart_image</b> (PNG base64) inline.",
+      "config.js contiene API_URL e API_KEY — gitignored, va copiato da config.example.js.",
+      "Bottone 'Nuova chat' chiama <b>/chat/reset</b>."
+    ]
+  },
+  APIAPP: {
+    title: "app.py — FastAPI", path: "api/app.py · 30 righe",
+    items: [
+      "<b>lifespan</b> apre <b>agent.connect()</b> una sola volta all'avvio: un solo processo MCP, condiviso tra tutte le richieste.",
+      "Salva mcp_session, system_instruction, chat_session e contatori usage in app.state.",
+      "Monta la cartella ui/ come StaticFiles su '/' — stessa origine, niente CORS. Il mount va dopo le route API."
+    ]
+  },
+  AUTHN: {
+    title: "auth.py — API key", path: "api/auth.py · 7 righe",
+    items: [
+      "Dependency <b>require_api_key</b>: confronta header <b>X-Api-Key</b> con env <b>API_KEY</b>.",
+      "Applicata a tutto il router chat via APIRouter(dependencies=[Depends(...)])."
+    ]
+  },
+  CHATROUTE: {
+    title: "routes/chat.py", path: "api/routes/chat.py · 219 righe",
+    items: [
+      "<b>POST /chat</b>: chiama agent.send(), accumula i token in app.state.usage, poi ricostruisce il grafico.",
+      "<b>GET /stats</b>: ritorna i contatori cumulativi di token/chiamate.",
+      "<b>POST /chat/reset</b>: nuova chat_session Gemini sulla stessa sessione MCP.",
+      "Il grafico viene costruito con una <b>query diretta al DB</b> (bypassa l'MCP) perché serve la serie completa, non il riassunto lean che vede il modello.",
+      "_CHARTABLE = 7 tool che attivano un grafico automatico; mapping tool→chart_type (line/calendar_heatmap/pie/treemap/bar/heatmap_grid) in _build_chart_data."
+    ],
+    metrics: ["7 tool chartable", "219 righe"]
+  },
+  AGENT: {
+    title: "agent/core.py — classe Agent", path: "agent/core.py · 130 righe",
+    items: [
+      "genai.Client (GEMINI_API_KEY_CREDIT) + StdioServerParameters che lancia <code>python src/mcp-server.py</code> come subprocess.",
+      "<b>connect()</b>: check schema-drift, apre stdio_client+ClientSession, legge la risorsa <b>db://schema</b> e costruisce il system prompt.",
+      "<b>new_session()</b>: chat Gemini 2.5 Flash con tools=[mcp_session] — tool-calling nativo via MCP.",
+      "<b>send()</b>: pota la storia ai <b>2 turni utente</b> reali (_trim_history filtra i function-response marcati role=user), poi estrae tool_calls e usage (prompt/output/thinking/cached tokens).",
+      "<b>_check_schema_drift()</b>: confronta i campi reali del DB con KNOWN_FIELDS hardcoded e avvisa se serve aggiornare le regole."
+    ],
+    metrics: ["model: gemini-2.5-flash", "history: 2 turni"]
+  },
+  PROMPTS: {
+    title: "agent/prompts.py", path: "agent/prompts.py · 81 righe",
+    items: [
+      "<b>VIOLATION_LABELS</b>: unica fonte di verità per le traduzioni IT dei violation_type — usata sia nel system prompt che nelle label dei grafici.",
+      "<b>FIELDS_RULES</b>: quali campi chiedere a get_event_by_id/list_events in base all'intento (conteggi → serve event_id; reviewed/detections solo se richiesti esplicitamente).",
+      "<b>GENERAL_RULES</b>: scope refusal, violation_type vs event_type, uso obbligatorio dei tool di aggregazione, <b>divieto assoluto di markdown</b> (la UI mostra testo grezzo), mapping tool→grafico, traduzioni IT."
+    ]
+  },
+  MCP: {
+    title: "src/mcp-server.py — FastMCP", path: "src/mcp-server.py · 526 righe",
+    items: [
+      "Risorsa <b>db://schema</b>: schema live (camere, event_type, violation_type, range date) letto all'avvio e iniettato nel system prompt — mai inventato dal modello.",
+      "2 tool primitivi: get_event_by_id, list_events (con selezione campi).",
+      "11 tool di aggregazione: count_events, rank_by_count, group_by_count, average_severity, events_per_day, average_events_per_period, events_by_hour, events_by_weekday_hour, rank_by_violation_type, group_by_violation_type, events_per_day_by_violation_type.",
+      "5 tool matematici (add/subtract/multiply/divide/percentage): il modello non fa mai calcoli a mente nel testo.",
+      "<b>_MAX_LIMIT = 20</b>: tetto rigido su ogni tool di listing. _LEAN_FIELDS vs _ALL_FIELDS per il controllo dei token.",
+      "EventFilters condiviso da tutti i tool: camera_name, event_type, violation_type, severity, reviewed, date_start/end, min/max_severity."
+    ],
+    metrics: ["18 tool", "1 risorsa", "max 20 righe/risposta"]
+  },
+  QUERIES: {
+    title: "db/queries.py", path: "db/queries.py · 331 righe",
+    items: [
+      "<b>EventFilters</b> (dataclass frozen) + <b>_apply_event_filters</b>: costruisce la catena di filtri SQLAlchemy.",
+      "Filtro violation_type via <b>EXISTS correlato</b> su event_detections — evita duplicazione righe quando un evento ha più rilevazioni.",
+      "Tutte le aggregazioni (count, group by, avg, per day/hour) usano func.count/avg/extract spinte a livello SQL, non in Python.",
+      "<b>get_event_fields()</b> usata dall'Agent per il check di schema-drift all'avvio."
+    ]
+  },
+  MODELS: {
+    title: "db/models.py — ORM", path: "db/models.py · 51 righe",
+    items: [
+      "<b>SafetyEvent</b>: event_id (PK), event_datetime (idx), camera_name (idx), event_type, severity (SmallInt), reviewed (bool).",
+      "<b>EventDetection</b>: id (PK), event_id (FK), violation_type, confidence Numeric(5,2) — una riga per persona/veicolo nel frame.",
+      "Relazione 1:N con cascade='all, delete-orphan'.",
+      "Engine: postgresql+psycopg2, DATABASE_URL o costruito da PASSWORD_SAFETY_AGENT_DB (.env.local)."
+    ]
+  },
+  WRITES: {
+    title: "db/writes.py", path: "db/writes.py · 24 righe",
+    items: [
+      "create_tables(): Base.metadata.create_all.",
+      "insert_events(): bulk insert a batch (batch_size=500), flush per batch, un solo commit finale."
+    ]
+  },
+  PG: {
+    title: "PostgreSQL", path: "DB: safety_agent_db",
+    items: [
+      "2 tabelle normalizzate: <b>safety_events</b> e <b>event_detections</b>.",
+      "Dati reali: dataset privato di un impianto industriale (non incluso nel repo).",
+      "Test set T-Eval ancorato a uno snapshot: 2090 eventi, 7 apr → 6 mag 2026, 10 telecamere, 6 violation_type."
+    ],
+    metrics: ["2090 eventi (snapshot T-Eval)", "10 camere", "6 violation_type"]
+  },
+  CSV: {
+    title: "Estrazione1.csv", path: "data/Estrazione1.csv",
+    items: [
+      "Export grezzo del sistema di computer vision, delimitatore ';'.",
+      "Colonna 'Name' impacchetta camera+tipo evento insieme; colonna 'Trigger' impacchetta rilevazioni multiple per frame con confidence in %."
+    ]
+  },
+  ANALYZE: {
+    title: "data-cleaning/analyze.py", path: "data-cleaning/analyze.py · 197 righe",
+    items: [
+      "<b>parse_trigger()</b>: regex che spacchetta 'ViolationType NN%, ...' in coppie (violation_type, confidence), una per rilevazione.",
+      "<b>parse_name()</b>: separa 'Camera: TipoEvento' — una camera genera più event_type distinti, serve separarli per raggruppare su entrambi gli assi.",
+      "count_field(): contatori generici ordinati per frequenza, usati nell'analisi esplorativa."
+    ]
+  },
+  IMPORTPY: {
+    title: "import_to_db.py", path: "data-cleaning/import_to_db.py · 62 righe",
+    items: [
+      "Legge il CSV riga per riga (generator <b>event_stream()</b>), costruisce oggetti ORM SafetyEvent + EventDetection.",
+      "Chiama create_tables() poi insert_events() da db/writes.py.",
+      "Parsing data: formato IT 'gg/mm/aaaa, HH:MM:SS'."
+    ]
+  },
+  VIZ: {
+    title: "visualize.py / generate_demo_plots.py", path: "data-cleaning/visualize.py · 192 righe + generate_demo_plots.py · 104 righe",
+    items: [
+      "5 grafici esplorativi matplotlib: violazioni per camera, eventi per ora, trend giornaliero, heatmap severità, rilevazioni multiple.",
+      "visualize.py gira sul dataset reale (privato); generate_demo_plots.py produce le versioni sintetiche incluse nel README/recap."
+    ]
+  },
+  PLOTCREATOR: {
+    title: "plot-creator/generate_histograms.py", path: "plot-creator/generate_histograms.py · 178 righe",
+    items: [
+      "<b>ChartData</b> dataclass (labels, values, title, chart_type, extra) + <b>render_chart()</b> dispatcher.",
+      "matplotlib backend Agg (headless) per bar/line/pie/horizontal_bar.",
+      "Renderer dedicati: <b>_render_treemap</b> (squarify, colormap RdYlGn_r), <b>_render_calendar_heatmap</b> (stile GitHub, per serie &gt;60 giorni), <b>_render_heatmap_grid</b> (matrici giorno×ora o data×violation_type).",
+      "Output sempre PNG base64, incorporato direttamente nel JSON di risposta — nessun file scritto su disco a runtime."
+    ]
+  },
+  TESTQ: {
+    title: "tests/test_queries.py", path: "tests/test_queries.py · 82 righe",
+    items: [
+      "7 test unitari su db/queries.py: get_event_by_id (trovato/non trovato), filtri validi/non validi, limit edge case (zero)."
+    ],
+    metrics: ["7 test"]
+  },
+  TESTMCP: {
+    title: "tests/test_mcp_live.py", path: "tests/test_mcp_live.py · 387 righe",
+    items: [
+      "Test end-to-end: avvia il vero server MCP e chiama i tool dal vivo (non mock).",
+      "Verifica il comportamento reale visto dal modello, non solo la logica DB."
+    ]
+  },
+  TOKBENCH: {
+    title: "run_benchmark.py / test_token_budget.py", path: "tests/run_benchmark.py · 155 righe · tests/test_token_budget.py · 267 righe",
+    items: [
+      "Confronta payload <b>FULL</b> (tutti i campi) vs <b>LEAN</b> (solo i campi richiesti) su 4 query realistiche.",
+      "Qualità valutata con LLM-as-judge (Gemini + giudizio Claude in generate_report.py).",
+      "Risultato: <b>-55/-57% token di input</b> con qualità di risposta pari o superiore; ha guidato la scelta di aggiungere tool di aggregazione dedicati (i listing grezzi spingono il modello a elencare invece di sintetizzare).",
+      "tests/benchmark_token_MinMax/generate_report.py costruisce un report HTML locale (non incluso nel repo, contiene estratti del dataset)."
+    ],
+    metrics: ["4 query × 2 varianti", "-55/-57% input tok"]
+  },
+  TEVAL: {
+    title: "run_t_eval.py — framework T-Eval", path: "tests/run_t_eval.py · 559 righe · t_eval_test_set.json · t_eval_results.json",
+    items: [
+      "Implementa le 3 dimensioni T-Eval: <b>R</b> Retrieve (tool corretto, score 0/0.5/1, gestisce sequenze multi-tool con 'tool1 + tool2'), <b>U</b> Understand (accuratezza parametri, confronto loose su date/bool/numeri), <b>V</b> Review (qualità risposta).",
+      "V: prima check programmatici (keyword refusal/not-found, match numerico esatto), poi fallback a <b>LLM-as-judge</b> (Gemini, output JSON strutturato, score 1-5 su correttezza+completezza).",
+      "Resume-safe: salva dopo ogni domanda, riprende dagli id già fatti; retry infinito con backoff esponenziale sui 503.",
+      "Test set: <b>68 casi</b> (58 in-scope su 14 categorie di tool + 10 out-of-scope), difficoltà easy/medium/hard, ancorati a uno snapshot DB reale.",
+      "Ultimo run (18/06/2026): <b>R=0.914 · U=0.922 · V=0.858</b>, refusal_rate=1.0. Punti deboli: get_event_by_id V=0.0 (3 casi), multi_tool R=0.5 (3 casi), count_events U=0.75. Costo: 367.960 prompt tok / 4.302 output / 135.487 cached."
+    ],
+    metrics: ["68 casi T-Eval", "R 0.91 · U 0.92 · V 0.86", "refusal 1.0"]
+  }
+};
+
+window.addEventListener("load", () => {
+  setTimeout(() => { wireTooltips(); setupZoom(); }, 500); // dare tempo a mermaid di renderizzare
+});
+
+let zoomLevel = 1.4; // diagramma grande di default, leggibile senza zoomare
+
+function setupZoom() {
+  const svg = document.querySelector("#graph svg");
+  if (!svg) return;
+  svg.style.transformOrigin = "top left";
+  applyZoom();
+
+  document.getElementById("zoomIn").addEventListener("click", () => { zoomLevel = Math.min(zoomLevel + 0.2, 4); applyZoom(); });
+  document.getElementById("zoomOut").addEventListener("click", () => { zoomLevel = Math.max(zoomLevel - 0.2, 0.4); applyZoom(); });
+  document.getElementById("zoomReset").addEventListener("click", () => { zoomLevel = 1.4; applyZoom(); });
+
+  function applyZoom() {
+    svg.style.transform = `scale(${zoomLevel})`;
+  }
+}
+
+function wireTooltips() {
+  const tooltip = document.getElementById("tooltip");
+  const nodes = document.querySelectorAll("#graph .node");
+
+  nodes.forEach(node => {
+    const m = (node.id || "").match(/flowchart-([A-Za-z0-9_]+)-\d+$/);
+    const key = m ? m[1] : null;
+    const info = key ? DETAILS[key] : null;
+    if (!info) return;
+
+    node.addEventListener("mousemove", (e) => showTooltip(e, info));
+    node.addEventListener("mouseleave", hideTooltip);
+  });
+
+  function showTooltip(e, info) {
+    let html = `<h4>${info.title}</h4><div class="path">${info.path}</div><ul>`;
+    info.items.forEach(i => html += `<li>${i}</li>`);
+    html += "</ul>";
+    if (info.metrics && info.metrics.length) {
+      html += `<div class="metrics">${info.metrics.map(m => `<span>${m}</span>`).join("")}</div>`;
+    }
+    tooltip.innerHTML = html;
+    tooltip.classList.add("show");
+    positionTooltip(e);
+  }
+
+  function positionTooltip(e) {
+    const pad = 18;
+    let x = e.clientX + pad;
+    let y = e.clientY + pad;
+    const tw = tooltip.offsetWidth || 360;
+    const th = tooltip.offsetHeight || 200;
+    if (x + tw > window.innerWidth - 10) x = e.clientX - tw - pad;
+    if (y + th > window.innerHeight - 10) y = e.clientY - th - pad;
+    tooltip.style.left = x + "px";
+    tooltip.style.top = y + "px";
+  }
+
+  function hideTooltip() {
+    tooltip.classList.remove("show");
+  }
+
+  document.querySelectorAll("#graph .node").forEach(node => {
+    node.addEventListener("mousemove", (e) => {
+      const m = (node.id || "").match(/flowchart-([A-Za-z0-9_]+)-\d+$/);
+      const key = m ? m[1] : null;
+      if (key && DETAILS[key]) positionTooltip(e);
+    });
+  });
+}
+</script>
+
+</body>
+</html>

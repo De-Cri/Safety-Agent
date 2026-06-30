@@ -74,14 +74,14 @@ def plot_violations_by_camera(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(12, 6))
     pivot.plot(kind="barh", stacked=True, ax=ax, colormap="tab10")
-    ax.set_title("Violazioni per telecamera", fontsize=14, fontweight="bold")
-    ax.set_xlabel("Numero eventi")
+    ax.set_title("Violations by camera", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Number of events")
     ax.set_ylabel("")
-    ax.legend(title="Tipo violazione", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.legend(title="Violation type", bbox_to_anchor=(1.01, 1), loc="upper left")
     plt.tight_layout()
     plt.savefig("data-cleaning/plots/plot_1_violations_by_camera.png", dpi=150)
     plt.close()
-    print("Salvato: plot_1_violations_by_camera.png")
+    print("Saved: plot_1_violations_by_camera.png")
 
 
 # ---------------------------------------------------------------------------
@@ -94,15 +94,15 @@ def plot_events_by_hour(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(14, 5))
     hourly.plot(kind="bar", stacked=True, ax=ax, colormap="tab10", width=0.85)
-    ax.set_title("Distribuzione eventi per ora del giorno", fontsize=14, fontweight="bold")
-    ax.set_xlabel("Ora")
-    ax.set_ylabel("Numero eventi")
+    ax.set_title("Event distribution by hour of day", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Hour")
+    ax.set_ylabel("Number of events")
     ax.set_xticklabels([str(h) for h in hourly.index], rotation=0)
-    ax.legend(title="Tipo violazione", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.legend(title="Violation type", bbox_to_anchor=(1.01, 1), loc="upper left")
     plt.tight_layout()
     plt.savefig("data-cleaning/plots/plot_2_events_by_hour.png", dpi=150)
     plt.close()
-    print("Salvato: plot_2_events_by_hour.png")
+    print("Saved: plot_2_events_by_hour.png")
 
 
 # ---------------------------------------------------------------------------
@@ -117,16 +117,16 @@ def plot_daily_trend(df: pd.DataFrame):
     fig, ax = plt.subplots(figsize=(14, 5))
     for col in daily.columns:
         ax.plot(daily.index, daily[col], marker="o", markersize=4, label=col)
-    ax.set_title("Trend giornaliero violazioni", fontsize=14, fontweight="bold")
-    ax.set_xlabel("Data")
-    ax.set_ylabel("Numero eventi")
+    ax.set_title("Daily violation trend", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Number of events")
     ax.xaxis.set_major_formatter(mdates.DateFormatter("%d/%m"))
-    ax.legend(title="Tipo violazione", bbox_to_anchor=(1.01, 1), loc="upper left")
+    ax.legend(title="Violation type", bbox_to_anchor=(1.01, 1), loc="upper left")
     plt.xticks(rotation=45)
     plt.tight_layout()
     plt.savefig("data-cleaning/plots/plot_3_daily_trend.png", dpi=150)
     plt.close()
-    print("Salvato: plot_3_daily_trend.png")
+    print("Saved: plot_3_daily_trend.png")
 
 
 # ---------------------------------------------------------------------------
@@ -144,13 +144,13 @@ def plot_severity_heatmap(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(8, 6))
     sns.heatmap(pivot, annot=True, fmt="d", cmap="YlOrRd", ax=ax, linewidths=0.5)
-    ax.set_title("Severità per telecamera", fontsize=14, fontweight="bold")
+    ax.set_title("Severity by camera", fontsize=14, fontweight="bold")
     ax.set_xlabel("Severity")
     ax.set_ylabel("")
     plt.tight_layout()
     plt.savefig("data-cleaning/plots/plot_4_severity_heatmap.png", dpi=150)
     plt.close()
-    print("Salvato: plot_4_severity_heatmap.png")
+    print("Saved: plot_4_severity_heatmap.png")
 
 
 # ---------------------------------------------------------------------------
@@ -164,28 +164,28 @@ def plot_multi_detections(df: pd.DataFrame):
 
     fig, ax = plt.subplots(figsize=(10, 5))
     counts.plot(kind="barh", ax=ax, color=sns.color_palette("muted")[2])
-    ax.set_title("Telecamere con detection multiple nello stesso frame", fontsize=14, fontweight="bold")
-    ax.set_xlabel("Numero eventi multi-detection")
+    ax.set_title("Cameras with multiple detections in the same frame", fontsize=14, fontweight="bold")
+    ax.set_xlabel("Number of multi-detection events")
     ax.set_ylabel("")
     plt.tight_layout()
     plt.savefig("data-cleaning/plots/plot_5_multi_detections.png", dpi=150)
     plt.close()
-    print("Salvato: plot_5_multi_detections.png")
+    print("Saved: plot_5_multi_detections.png")
 
 
 def main():
-    print("Caricamento dati...")
+    print("Loading data...")
     df = load(CSV_PATH)
-    print(f"  {len(df)} eventi caricati\n")
+    print(f"  {len(df)} events loaded\n")
 
-    print("Generazione grafici:")
+    print("Generating charts:")
     plot_violations_by_camera(df)
     plot_events_by_hour(df)
     plot_daily_trend(df)
     plot_severity_heatmap(df)
     plot_multi_detections(df)
 
-    print("\nTutti i grafici salvati in data-cleaning/plots/")
+    print("\nAll charts saved to data-cleaning/plots/")
 
 
 if __name__ == "__main__":
