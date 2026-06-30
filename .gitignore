@@ -8,6 +8,6 @@ architettura_tecnica.html
 tests/mcp_test_report.html
 tests/benchmark_token_MinMax/benchmark_report.html
 tests/benchmark_token_MinMax/benchmark_results.json
-
+tests/evaluations/test_chart_coverage.html
 # Archivio sorgente per la consegna (generato con git archive)
 *.zip
